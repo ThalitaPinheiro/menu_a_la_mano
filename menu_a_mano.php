@@ -3,9 +3,9 @@
 Plugin Name: Menu a Mano
 Plugin URL:
 Description: Este plugin ajuda no cadastro, edição e moderação de cardapios
-Author: ThalitaPinheiro
+Author: ThalitaPinheiro, danielejcruz
 Version: 1.0
-Author URL: http://profiles.wordpress.org/thalitapinheiro
+Author URL: http://profiles.wordpress.org/thalitapinheiro ; https://github.com/danielejcruz
 */
 
 	function menu(){
