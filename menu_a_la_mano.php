@@ -10,9 +10,9 @@ Author URL: http://profiles.wordpress.org/thalitapinheiro ; https://github.com/d
 
 	function menu(){
 
-		add_menu_page('Página - Cardápio','Cardápios',10 ,'menu_a_mano/menu_a_mano.php');
-		add_submenu_page('menu_a_mano/menu_a_mano.php', 'Cardápio', 'Novo Cardápio',10,'menu_a_mano/new_menu.php');
-		add_submenu_page('menu_a_mano/menu_a_mano.php', 'Cardápio', 'Lista Cardápios',10,'menu_a_mano/menu_a_mano.php');
+		add_menu_page('Página - Cardápio','Cardápios',10 ,'plugin/menu_a_la_mano.php');
+		add_submenu_page('plugin/menu_a_la_mano.php', 'Cardápio', 'Novo Cardápio',10,'plugin/new_menu.php');
+		add_submenu_page('plugin/menu_a_la_mano.php', 'Cardápio', 'Lista Cardápios',10,'plugin/menu_a_la_mano.php');
 	}
 
 	add_action('admin_menu','menu')
