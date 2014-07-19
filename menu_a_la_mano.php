@@ -65,9 +65,9 @@
             } // END public static function deactivate
             
             function menu() {
-                add_menu_page('Cardápios','Cardápios', 10 ,'menu_a_mano/menu_a_la_mano.php');
-                add_submenu_page('menu_a_mano/menu_a_la_mano.php', 'Novo Cardápio', 'Novo Cardápio',10,'menu_a_mano/new_menu.php');
-                add_submenu_page('menu_a_mano/menu_a_la_mano.php', 'Lista de Cardápio', 'Lista de Cardápios',10,'menu_a_mano/menu_a_la_mano.php');
+                add_menu_page('Cardápios','Cardápios', 10 ,'menu_a_la_mano/menu_a_la_mano.php');
+                add_submenu_page('menu_a_la_mano/menu_a_la_mano.php', 'Novo Cardápio', 'Novo Cardápio',10,'menu_a_la_mano/new_menu.php');
+                add_submenu_page('menu_a_la_mano/menu_a_la_mano.php', 'Lista de Cardápio', 'Lista de Cardápios',10,'menu_a_la_mano/menu_a_la_mano.php');
             }
             
             // Registra tipos de vinho
