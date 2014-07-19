@@ -37,7 +37,13 @@
             public function __construct()
             {
                 //MENU
-                add_action('admin_menu',array(&$this, 'menu'));
+                add_action('admin_menu', array(&$this, 'menu'));
+                // Hook into the 'init' action
+                
+                add_action( 'init', array(&$this, 'wine_taxonomy'), 0 );
+                
+                add_action( 'init', array(&$this, 'create_posttype') );
+  
 
                 // register actions
             } // END public function __construct
@@ -59,12 +65,60 @@
             } // END public static function deactivate
             
             function menu() {
-                add_menu_page('Cardápios','Cardápios', 10 ,'menu_a_la_mano/menu_a_la_mano.php');
-                add_submenu_page('menu_a_la_mano/menu_a_la_mano.php', 'Novo Cardápio', 'Novo Cardápio',10,'menu_a_la_mano/new_menu.php');
-                add_submenu_page('menu_a_la_mano/menu_a_la_mano.php', 'Lista de Cardápio', 'Lista de Cardápios',10,'menu_a_la_mano/menu_a_la_mano.php');
-            }            
+                add_menu_page('Cardápios','Cardápios', 10 ,'menu_a_mano/menu_a_la_mano.php');
+                add_submenu_page('menu_a_mano/menu_a_la_mano.php', 'Novo Cardápio', 'Novo Cardápio',10,'menu_a_mano/new_menu.php');
+                add_submenu_page('menu_a_mano/menu_a_la_mano.php', 'Lista de Cardápio', 'Lista de Cardápios',10,'menu_a_mano/menu_a_la_mano.php');
+            }
+            
+            // Registra tipos de vinho
+            function wine_taxonomy() {
+            
+                $labels = array(
+                    'name'                       => _x( 'Categorias de Vinhos', 'Taxonomy General Name', 'text_domain' ),
+                    'singular_name'              => _x( 'Categoria de Vinho', 'Taxonomy Singular Name', 'text_domain' ),
+                    'menu_name'                  => __( 'Categoria de Vinho', 'text_domain' ),
+                    'all_items'                  => __( 'Todos as Categorias de Vinho', 'text_domain' ),
+                    'parent_item'                => __( 'Parent Item', 'text_domain' ),
+                    'parent_item_colon'          => __( 'Parent Item:', 'text_domain' ),
+                    'new_item_name'              => __( 'Nome de Nova Categoria', 'text_domain' ),
+                    'add_new_item'               => __( 'Adicionar Nova Categoria', 'text_domain' ),
+                    'edit_item'                  => __( 'Editar Categoria', 'text_domain' ),
+                    'update_item'                => __( 'Atualizar Categoria', 'text_domain' ),
+                    'separate_items_with_commas' => __( 'Separate items with commas', 'text_domain' ),
+                    'search_items'               => __( 'Buscar Categorias', 'text_domain' ),
+                    'add_or_remove_items'        => __( 'Add or remove items', 'text_domain' ),
+                    'choose_from_most_used'      => __( 'Choose from the most used items', 'text_domain' ),
+                    'not_found'                  => __( 'Not Found', 'text_domain' ),
+                );
+                $args = array(
+                    'labels'                     => $labels,
+                    'hierarchical'               => true,
+                    'public'                     => true,
+                    'show_ui'                    => true,
+                    'show_admin_column'          => false,
+                    'show_in_nav_menus'          => true,
+                    'show_tagcloud'              => false,
+                );
+                register_taxonomy( 'wine', array( 'carta_vinhos' ), $args );
+            }
+            
+            function create_posttype() {
+                register_post_type( 'carta_vinhos',
+                    array(
+                        'labels' => array(
+                            'name' => __( 'Carta de Vinhos' ),
+                            'singular_name' => __( 'Carta de Vinhos' )
+                        ),
+                        'public' => true,
+                        'has_archive' => true,
+                        'rewrite' => array('slug' => 'products'),
+                    )
+                );
+            }
+            
         } // END class Menu_a_la_mano
     } // END if(!class_exists('Menu_a_la_mano'))
+
 
     if(class_exists('Menu_a_la_mano'))
     {
@@ -75,4 +129,5 @@
         // instantiate the plugin class
         $wp_plugin_template = new Menu_a_la_mano();
     }
+
 ?>
