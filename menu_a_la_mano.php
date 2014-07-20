@@ -154,21 +154,61 @@
                  );
             }
             
-            function wine_meta() {
-                global $post;
-                $custom = get_post_custom($post->ID);
-                $price = $custom["price"][0]; // define o campo preço | mesmo nome do input
+            function wine_meta($post) {
+                
+                // Add an nonce field so we can check for it later.
+                wp_nonce_field( 'wine_inner_custom_box', 'wine_inner_custom_box_nonce' );
+            
+                $value = get_post_meta($post->ID, '_my_meta_value_key', true);
+                $price = $custom["price"];  // define o campo preço | mesmo nome do input
 ?>
-                <p>R$ <input type="text" name="price" id="price" min="0" step="0.01"  value="<?php echo $price; ?>" /></p>
+                <p>R$ <input type="number" name="price" id="price" value="<?php echo esc_attr( $value ); ?>" /></p>
 <?php
             }
             
             //Salva o campo personalizado
-            function save_price_wine() {
-                global $post;
-                // salva os campos personalizados
-                update_post_meta($post->ID, "price", $_POST["price"]);
-                // fim dos campos personalizados
+            function save_price_wine($post_id) {
+                
+                /*
+                 * We need to verify this came from the our screen and with proper authorization,
+                 * because save_post can be triggered at other times.
+                 */
+                    
+                // Check if our nonce is set.
+                if ( ! isset( $_POST['wine_inner_custom_box_nonce'] ) )
+                    return $post_id;
+        
+                $nonce = $_POST['wine_inner_custom_box_nonce'];
+        
+                // Verify that the nonce is valid.
+                if ( ! wp_verify_nonce( $nonce, 'wine_inner_custom_box' ) )
+                    return $post_id;
+                
+                    
+                // If this is an autosave, our form has not been submitted,
+                //     so we don't want to do anything.
+                if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+                    return $post_id;
+        
+                // Check the user's permissions.
+                if ( 'wine' == $_POST['post_type'] ) {
+        
+                    if ( ! current_user_can( 'edit_page', $post_id ) )
+                        return $post_id;
+            
+                } else {
+        
+                    if ( ! current_user_can( 'edit_post', $post_id ) )
+                        return $post_id;
+                }
+        
+                /* OK, its safe for us to save the data now. */
+        
+                // Sanitize the user input.
+                $mydata = sanitize_text_field( $_POST['price'] );
+        
+                // Update the meta field.
+                update_post_meta( $post_id, '_my_meta_value_key', $mydata );   
             }
             
         } // END class Menu_a_la_mano
