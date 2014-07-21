@@ -10,10 +10,15 @@ function func_filtro_teste($content){
 
         $loop = new WP_Query( $args );
 
-        while ( $loop->have_posts() ) : $loop->the_post(); 
+        while ( $loop->have_posts() ) : $loop->the_post();
+        	the_title();
+			echo '<div class="entry-content">';
+			the_content();
+			echo '</div>';
+        endwhile;
     }
 	
-		return $content;
+		return ;
 
 }
 
