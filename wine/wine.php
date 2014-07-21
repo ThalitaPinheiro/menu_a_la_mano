@@ -192,12 +192,13 @@
             
             function wine_filter($content) {
                 global $post;
-                
+                if(get_post_type($post) == 'wine') {
                 $key = '_my_meta_value_key';
                 $price = get_post_meta($post->ID, $key, true);
                 $custom_content = 'R$ ' . $price;
                 
                 $content = $content . $custom_content;
+                }
                 return $content;
             }
         } // END class Vino_a_la_mano

@@ -43,6 +43,7 @@
                 //Adiciona campo personalizado
                 add_action("admin_init", array($this, 'food_meta_box'));
                 add_action('save_post', array($this, 'save_custom_food'));
+                add_filter('the_content', array($this, 'food_filter'));
             } // END public function __construct
 
             // Define o tipo de post Carta de Vinhos
@@ -133,7 +134,7 @@
                 // Add an nonce field so we can check for it later.
                 wp_nonce_field( 'food_inner_custom_box', 'food_inner_custom_box_nonce' );
             
-                $custom_fields = get_post_custom($post->ID, '_my_meta_value_key', true);
+                $custom_fields = get_post_custom($post->ID);
                 $food_price = $custom_fields['food_price'][0];
                 $food_enter_date = $custom_fields['food_enter_date'][0];
                 $food_exit_date = $custom_fields['food_exit_date'][0];
@@ -208,6 +209,23 @@
                 update_post_meta( $post_id, 'food_enter_date', $food_enter_date );
                 update_post_meta( $post_id, 'food_exit_date', $food_exit_date );
                 
+            }
+            
+            function food_filter($content) {
+                global $post;
+                if(get_post_type($post)=='food') {
+                    $key = '_my_meta_value_key';
+                    
+                    $custom_fields = get_post_custom($post->ID, $key, true);
+                    $food_price = $custom_fields['food_price'][0];
+                    $food_enter_date = $custom_fields['food_enter_date'][0];
+                    $food_exit_date = $custom_fields['food_exit_date'][0];
+                    
+                    $custom_content = 'R$ ' . $food_price . '<p>' . $food_enter_date . '</p><p>' . $food_exit_date . '</p>';
+                    
+                    $content = $content . $custom_content;
+                }
+                return $content;
             }
             
         } // END class Comida_a_la_mano
