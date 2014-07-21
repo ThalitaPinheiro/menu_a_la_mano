@@ -43,6 +43,9 @@
                 //Adiciona campo personalizado
                 add_action("admin_init", array($this, 'wine_meta_box'));
                 add_action('save_post', array($this, 'save_price_wine'));
+                
+                add_filter('the_content', array($this, 'wine_filter'));
+                
             } // END public function __construct
 
             // Define o tipo de post Carta de Vinhos
@@ -187,6 +190,16 @@
                 update_post_meta( $post_id, '_my_meta_value_key', $mydata );   
             }
             
+            function wine_filter($content) {
+                global $post;
+                
+                $key = '_my_meta_value_key';
+                $price = get_post_meta($post->ID, $key, true);
+                $custom_content = 'R$ ' . $price;
+                
+                $content = $content . $custom_content;
+                return $content;
+            }
         } // END class Vino_a_la_mano
     } // END if(!class_exists('Vino_a_la_mano'))
 
