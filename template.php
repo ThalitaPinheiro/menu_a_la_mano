@@ -4,16 +4,16 @@
 //$param = apply_filters('filtro_teste',false);
 
 function func_filtro_teste($content){
-	if (get_post_type( $this )=='wine'){
+    global $post;
+	if (get_post_type( $post->ID )=='wine'){
 		$args = array(  'post_type' => 'wine', 
           'posts_per_page' => '3');
 
         $loop = new WP_Query( $args );
 
         while ( $loop->have_posts() ) : $loop->the_post();
-        	the_title();
-			echo '<div class="entry-content">';
-			the_content();
+        	echo '<div class="entry-content">';
+			echo $content;
 			echo '</div>';
         endwhile;
     }
