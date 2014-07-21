@@ -63,6 +63,7 @@
                 require_once(MENU_A_LA_MANO_DIR . 'wine/wine.php');
                 require_once(MENU_A_LA_MANO_DIR . 'food/food.php');
                 require_once(MENU_A_LA_MANO_DIR . 'template.php');
+                require_once(MENU_A_LA_MANO_DIR . 'pageofposts.php');
                 
             }
             
