@@ -139,6 +139,12 @@
                 $food_enter_date = $custom_fields['food_enter_date'][0];
                 $food_exit_date = $custom_fields['food_exit_date'][0];
                 
+                if(empty($food_enter_date)) {
+                    $food_enter_date = current_time('d/m/Y');
+                }
+                if(empty($food_exit_date)) {
+                    $food_exit_date = current_time('d/m/Y');
+                }
                 // Display the form, using the current value.
                 echo '<label for="food_price">';
                 _e( 'Preço');
@@ -211,6 +217,7 @@
                 
             }
             
+            //Mostra as informações adicionais
             function food_filter($content) {
                 global $post;
                 if(get_post_type($post)=='food') {
@@ -228,6 +235,13 @@
                 return $content;
             }
             
+            //Função que coloca um cardápio/prato como rascunho (para de exibi-lo)
+            function expire_food($post) {
+                if(get_post_type($post)=='food') {
+                    $food_exit_date = get_post_meta($id,'food_exit_date',true);
+                
+                }
+            }
         } // END class Comida_a_la_mano
     } // END if(!class_exists('Comida_a_la_mano'))
 
