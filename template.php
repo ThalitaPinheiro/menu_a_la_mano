@@ -5,7 +5,7 @@
 
 function func_filtro_teste($content){
     global $post;
-	if (get_post_type( $post->ID )=='wine'){
+	if (get_post_type( $post->ID )=='wine') {
 		$args = array(  'post_type' => 'wine', 
           'posts_per_page' => '3');
 
