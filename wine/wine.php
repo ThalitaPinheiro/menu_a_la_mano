@@ -83,7 +83,7 @@
                     'publicly_queryable'  => true,
                     'capability_type'     => 'page',
                 );
-                register_post_type( 'enoteca', $args );            
+                register_post_type( 'wine', $args );            
             } //Fim da função que cria post type Wine
 
             // Registra tipos de vinho
@@ -170,7 +170,7 @@
                     return $post_id;
         
                 // Check the user's permissions.
-                if ( 'enoteca' == $_POST['post_type'] ) {
+                if ( 'wine' == $_POST['post_type'] ) {
         
                     if ( ! current_user_can( 'edit_page', $post_id ) )
                         return $post_id;
@@ -192,7 +192,7 @@
             
             function wine_filter($content) {
                 global $post;
-                if(get_post_type($post) == 'enoteca') {
+                if(get_post_type($post) == 'wine') {
                 $key = '_my_meta_value_key';
                 $price = get_post_meta($post->ID, $key, true);
                 $custom_content = 'R$ ' . $price;

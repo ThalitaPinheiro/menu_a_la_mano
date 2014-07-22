@@ -81,7 +81,7 @@
                     'publicly_queryable'  => true,
                     'capability_type'     => 'page',
                 );
-                register_post_type( 'cardapio', $args );            
+                register_post_type( 'food', $args );            
             } //Fim da função que cria post type food
 
             // Registra tipos de vinho
@@ -192,7 +192,7 @@
                     return $post_id;
         
                 // Check the user's permissions.
-                if ( 'cardapio' == $_POST['post_type'] ) {
+                if ( 'food' == $_POST['post_type'] ) {
         
                     if ( ! current_user_can( 'edit_page', $post_id ) )
                         return $post_id;
@@ -220,7 +220,7 @@
             //Mostra as informações adicionais
             function food_filter($content) {
                 global $post;
-                if(get_post_type($post) == 'cardapio') {
+                if(get_post_type($post) == 'food') {
                     $key = '_my_meta_value_key';
                     
                     $custom_fields = get_post_custom($post->ID, $key, true);
@@ -237,7 +237,7 @@
             
             //Função que coloca um cardápio/prato como rascunho (para de exibi-lo)
             function expire_food($post) {
-                if(get_post_type($post) == 'cardapio') {
+                if(get_post_type($post) == 'food') {
                     $food_exit_date = get_post_meta($id,'food_exit_date',true);
                 
                 }
