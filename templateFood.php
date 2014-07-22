@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Carta de vinhos
+ * Template Name: Cardápio
  *
  * Description: A page template that provides a key component of WordPress as a CMS
  * by meeting the need for a carefully crafted introductory page. The front page template
@@ -14,22 +14,22 @@
 
 get_header(); ?>
 
-	<div id="primary" class="site-content">
-		<div id="content" role="main">
+    <div id="primary" class="site-content">
+        <div id="content" role="main">
 
-			<?php 
-			
-		$args = array( 'post_type' => 'wine', 'posts_per_page' => 100 );
-		$loop = new WP_Query( $args );
-		while ( $loop->have_posts() ) : $loop->the_post();
-			the_title();
-			echo '<br/><div class="entry-content">';
-			the_content();
-			echo '</div><br/><br/>';
-		endwhile;?>
+            <?php 
+            
+        $args = array( 'post_type' => 'food', 'posts_per_page' => 100 );
+        $loop = new WP_Query( $args );
+        while ( $loop->have_posts() ) : $loop->the_post();
+            the_title();
+            echo '<br/><br/><div class="entry-content">';
+            the_content();
+            echo '</div><br/><br/>';
+        endwhile;?>
 
-		</div><!-- #content -->
-	</div><!-- #primary -->
+        </div><!-- #content -->
+    </div><!-- #primary -->
 
 <?php get_sidebar( 'front' ); ?>
 <?php get_footer();
