@@ -18,20 +18,7 @@ get_header(); ?>
 		<div id="content" role="main">
             <h1>Enoteca</h1>
             <h2> Carta de Vinhos</h2>
-			<?php 
-			
-/*
-		$args = array( 'post_type' => 'wine', 'posts_per_page' => 100 );
-		$loop = new WP_Query( $args );
-		while ( $loop->have_posts() ) : $loop->the_post();
-            
-            the_title();
-			echo '<br/><br/><div class="entry-content">';
-			the_content();
-			echo '</div><br/><br/>';
-		endwhile;
-*/
-            
+			<?php        
 
     $cat_args = array(
         'orderby'   => 'name',
@@ -42,9 +29,8 @@ get_header(); ?>
     $categories = get_terms('wine', $cat_args);
 
     foreach($categories as $category) {
-        
+  /*      
         $args = array(
-            'showposts' => -1,
             'tax_query'  => array(
                 array(
                     'taxonomy'  => 'wine',
@@ -57,9 +43,9 @@ get_header(); ?>
         $posts = get_posts($args);
     
         if ($posts) {
-            
+    */        
             echo '<h3>' . $category->name.' </p> ';  
-        }
+      //  }
         
         $subcat_args = array(
             'orderby'   => 'name',
@@ -71,7 +57,6 @@ get_header(); ?>
     
         foreach($subcategories as $subcategory) {
                 $args = array(
-                    'showposts' => -1,
                     'tax_query'  => array(
                         array(
                             'taxonomy'  => 'wine',
