@@ -17,7 +17,9 @@ get_header(); ?>
 	<div id="primary" class="site-content">
 		<div id="content" role="main">
             <h1>Enoteca</h1>
+            <p></p>
             <h2> Carta de Vinhos</h2>
+            <p></p>
 			<?php        
     
     $cat_args = array(
@@ -31,7 +33,7 @@ get_header(); ?>
 
 
     foreach($categories as $category) {
-  /*      
+        
         $args = array(
             'tax_query'  => array(
                 array(
@@ -43,56 +45,32 @@ get_header(); ?>
         );
 
         $posts = get_posts($args);
-    
+        $term_aux ='';
         if ($posts) {
-    */        
+            
             echo '<h3>' . $category->name.' </p> ';  
-      //  }
+            foreach($posts as $post) {
+                $terms = get_the_terms($post->id, 'wine');
+                foreach($terms as $term) {
+                    if($category->name != $term->name && $term_aux != $term->name) {
+                        $term_aux = $term->name;
+                        echo '<h4>' . $term->name.'</h4> ';  
+                        
+                        
+                    }                      
+                }
+                echo '<ul>';
+                        the_title();
+                        echo '<br/><br/><div class="entry-content">';
+                        the_content();
+                        echo '</div><br/><br/>';
+                  echo '</ul>';              
+            }
+        }
         
-        $subcat_args = array(
-            'orderby'   => 'name',
-            'order'     => 'ASC',
-            'parent'    => $category->term_id // Categoria filha da categoria atual
-          );
-    
-        $subcategories = get_terms('wine', $subcat_args);
-    
-        foreach($subcategories as $subcategory) {
-                $args = array(
-                    'tax_query'  => array(
-                        array(
-                            'taxonomy'  => 'wine',
-                            'field'     => 'term_id',
-                            'terms'     => $subcategory->term_id)
-                    ),
-                    'post_type' => 'wine'
-                );
-        //verifica se possui posts da subcategoria
-        $posts = get_posts($args);
-        
-        if ($posts) {
-            
-            echo '<h4>' . $subcategory->name.'</h4> ';  
-                
-              echo '<ul>';
-              foreach($posts as $post) {
-                    the_title();
-                    echo '<br/><br/><div class="entry-content">';
-                    the_content();
-                    echo '</div><br/><br/>';
-              } // foreach($posts
-              echo '</ul>';
-     
-            } // if ($posts
-        } // foreach $subcategories
       } // foreach($categories
-
-            
-            
             ?>
-            
-            
-            
+            <p></p>
             <p>*3005 Taxa de Rolha R$ 40,00</p>    
             <p>** Legenda Pontuações</p>
             <p>WS ‒ Wine Spectator</p>
