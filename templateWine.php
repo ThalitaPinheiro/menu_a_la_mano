@@ -16,18 +16,105 @@ get_header(); ?>
 
 	<div id="primary" class="site-content">
 		<div id="content" role="main">
-
+            <h1>Enoteca</h1>
+            <h2> Carta de Vinhos</h2>
 			<?php 
 			
+/*
 		$args = array( 'post_type' => 'wine', 'posts_per_page' => 100 );
 		$loop = new WP_Query( $args );
 		while ( $loop->have_posts() ) : $loop->the_post();
-			the_title();
+            
+            the_title();
 			echo '<br/><br/><div class="entry-content">';
 			the_content();
 			echo '</div><br/><br/>';
-		endwhile;?>
+		endwhile;
+*/
+            
 
+    $cat_args = array(
+        'orderby'   => 'name',
+        'order'     => 'ASC',
+        'parent'    => 0
+      );
+    
+    $categories = get_terms('wine', $cat_args);
+
+    foreach($categories as $category) {
+        
+        $args = array(
+            'showposts' => -1,
+            'tax_query'  => array(
+                array(
+                    'taxonomy'  => 'wine',
+                    'field'     => 'term_id',
+                    'terms'     => $category->term_id)
+            ),
+            'post_type' => 'wine'
+        );
+
+        $posts = get_posts($args);
+    
+        if ($posts) {
+            
+            echo '<h3>' . $category->name.' </p> ';  
+        }
+        
+        $subcat_args = array(
+            'orderby'   => 'name',
+            'order'     => 'ASC',
+            'parent'    => $category->term_id
+          );
+    
+        $subcategories = get_terms('wine', $subcat_args);
+    
+        foreach($subcategories as $subcategory) {
+                $args = array(
+                    'showposts' => -1,
+                    'tax_query'  => array(
+                        array(
+                            'taxonomy'  => 'wine',
+                            'field'     => 'term_id',
+                            'terms'     => $subcategory->term_id)
+                    ),
+                    'post_type' => 'wine'
+                );
+    
+        $posts = get_posts($args);
+    
+        if ($posts) {
+            
+            echo '<h4>' . $subcategory->name.'</h4> ';  
+                
+              echo '<ul>';
+              foreach($posts as $post) {
+                    the_title();
+                    echo '<br/><br/><div class="entry-content">';
+                    the_content();
+                    echo '</div><br/><br/>';
+              } // foreach($posts
+              echo '</ul>';
+     
+            } // if ($posts
+        } // foreach $subcategories
+      } // foreach($categories
+
+            
+            
+            ?>
+            
+            
+            
+            <p>*3005 Taxa de Rolha R$ 40,00</p>    
+            <p>** Legenda Pontuações</p>
+            <p>WS ‒ Wine Spectator</p>
+            <p>RP ‒ Robert Parker</p>
+            <p>GR ‒ Guia Gamero Rosso (1 a 3 ᴪ)</p>
+            <p>W&S ‒ Wine & Spirits</p>
+            <p>DEC ‒ Decanter (1 a 5 *)</p>
+            <p>WE ‒ Wine Enthusiast</p>    
+            <p>JR ‒ Jancis Robinson (0 a 20)</p>    
 		</div><!-- #content -->
 	</div><!-- #primary -->
 
