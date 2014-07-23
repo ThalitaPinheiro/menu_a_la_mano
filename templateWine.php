@@ -19,14 +19,16 @@ get_header(); ?>
             <h1>Enoteca</h1>
             <h2> Carta de Vinhos</h2>
 			<?php        
-
+    
     $cat_args = array(
-        'orderby'   => 'name',
-        'order'     => 'ASC',
-        'parent'    => 0
+        'orderby'   => 'name',  //organizar categorias por nome
+        'order'     => 'ASC',   //ordem ascendente
+        'parent'    => 0        //Não possui categoria pai.
       );
     
+    //Retorna array de categorias/taxonomy do tipo 'wine'
     $categories = get_terms('wine', $cat_args);
+
 
     foreach($categories as $category) {
   /*      
@@ -50,7 +52,7 @@ get_header(); ?>
         $subcat_args = array(
             'orderby'   => 'name',
             'order'     => 'ASC',
-            'parent'    => $category->term_id
+            'parent'    => $category->term_id // Categoria filha da categoria atual
           );
     
         $subcategories = get_terms('wine', $subcat_args);
@@ -65,9 +67,9 @@ get_header(); ?>
                     ),
                     'post_type' => 'wine'
                 );
-    
+        //verifica se possui posts da subcategoria
         $posts = get_posts($args);
-    
+        
         if ($posts) {
             
             echo '<h4>' . $subcategory->name.'</h4> ';  
