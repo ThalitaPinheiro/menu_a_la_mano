@@ -221,6 +221,8 @@
             function food_filter($content) {
                 global $post;
                 if(get_post_type($post) == 'food') {
+                    
+                    $today = current_day('d/m/Y');
                     $key = '_my_meta_value_key';
                     
                     $custom_fields = get_post_custom($post->ID, $key, true);
@@ -228,9 +230,15 @@
                     $food_enter_date = $custom_fields['food_enter_date'][0];
                     $food_exit_date = $custom_fields['food_exit_date'][0];
                     
-                    $custom_content = 'R$ ' . $food_price;
-                    
-                    $content = $content . $custom_content;
+                    if($today >= $food_enter_date && $today <= $food_exit_date) {
+                        
+                        $custom_content = 'R$ ' . $food_price;                        
+                        $content = $content . $custom_content;
+                        
+                    }
+                    else {
+                        $content = '';
+                    }
                 }
                 return $content;
             }
