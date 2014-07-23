@@ -18,19 +18,18 @@ get_header(); ?>
         <div id="content" role="main">
 
 <?php 
-        $today = current_time('Y-m-d');
+        $today = $current_time('d/m/Y');
         
 
         $key = '_my_meta_value_key';
         
-        
+        $custom_fields = get_post_custom($post->ID, $key, true);
+        $food_enter_date = $custom_fields['food_enter_date'][0];
+        $food_exit_date = $custom_fields['food_exit_date'][0];
 
         $args = array( 'post_type' => 'food', 'posts_per_page' => 100 );
         $loop = new WP_Query( $args );
         while ( $loop->have_posts() ) : $loop->the_post();
-        $custom_fields = get_post_custom($post->ID, $key, true);
-        $food_enter_date = $custom_fields['food_enter_date'][0];
-        $food_exit_date = $custom_fields['food_exit_date'][0];
         if($today >= $food_enter_date && $today <= $food_exit_date) {
             
             the_title();
