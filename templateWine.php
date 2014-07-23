@@ -19,7 +19,47 @@ get_header(); ?>
             <h1>Enoteca</h1>
             <h2> Carta de Vinhos</h2>
 			<?php 
-			
+
+
+    $cat_args = array(
+        'orderby'   => 'name',
+        'order'     => 'ASC',
+      );
+    
+    $categories = get_terms('wine', $cat_args);
+
+    foreach($categories as $category) {
+        
+        $args = array(
+            'showposts' => -1,
+            'tax_query'  => array(
+                array(
+                    'taxonomy'  => 'wine',
+                    'field'     => 'term_id',
+                    'terms'     => $category->term_id)
+            ),
+            'post_type' => 'wine'
+        );
+
+        $posts = get_posts($args);
+    
+        if ($posts) {
+            
+            echo '<h4>' . $category->name.'</h4> ';  
+                
+              echo '<ul>';
+              foreach($posts as $post) {
+                    the_title();
+                    echo '<br/><br/><div class="entry-content">';
+                    the_content();
+                    echo '</div><br/><br/>';
+              } // foreach($posts
+              echo '</ul>';
+     
+            } // if ($posts
+      } // foreach($categories
+
+		
 /*
 		$args = array( 'post_type' => 'wine', 'posts_per_page' => 100 );
 		$loop = new WP_Query( $args );
@@ -33,7 +73,7 @@ get_header(); ?>
 */
             
 
-    $cat_args = array(
+/*    $cat_args = array(
         'orderby'   => 'name',
         'order'     => 'ASC',
         'parent'    => 0
@@ -100,7 +140,7 @@ get_header(); ?>
         }
         } // foreach $subcategories
       } // foreach($categories
-
+*/
             
             
             ?>
