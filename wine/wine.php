@@ -44,8 +44,6 @@
                 add_action("admin_init", array($this, 'wine_meta_box'));
                 add_action('save_post', array($this, 'save_price_wine'));
                 
-                add_filter('the_content', array($this, 'wine_filter'));
-                
             } // END public function __construct
 
             // Define o tipo de post Carta de Vinhos
@@ -121,8 +119,8 @@
             function wine_meta_box() {
                 
                 add_meta_box(
-                    'wine_price',       //Nome do metabox
-                    __('Preço'),        //Título da Caixa do campo personalizado
+                    'wine_meta_box',       //Nome do metabox
+                    __('Outras informações'),        //Título da Caixa do campo personalizado
                     array($this, 'wine_meta'),   //Função que será chamada para exibir o conteúdo
                     'wine',             //Tipo de post que vai ter esse campo personalizado
                     'normal',           //Local da página de edição onde será exibido o campo personalizado
@@ -135,15 +133,25 @@
                 
                 // Add an nonce field so we can check for it later.
                 wp_nonce_field( 'wine_inner_custom_box', 'wine_inner_custom_box_nonce' );
-            
-                $value = get_post_meta($post->ID, '_my_meta_value_key', true);
+                
+                $key = '_my_meta_value_key';
+                    
+                $custom_fields = get_post_custom($post->ID);
+                $wine_price = $custom_fields['wine_price'][0];
+                $wine_year = $custom_fields['wine_year'][0];
                 
                 // Display the form, using the current value.
-                echo '<label for="price">';
+                echo '<label for="wine_price">';
                 _e( 'Preço');
                 echo '</label> ';
-                echo '<input type="number" id="price" name="price"';
-                echo ' value="' . esc_attr( $value ) . '" />';                
+                echo '<input type="number" id="wine_price" name="wine_price"';
+                echo ' value="' . esc_attr( $wine_price ) . '" />';
+                
+                echo '<p><label for="wine_year">';
+                _e( 'Ano');
+                echo '</label> ';
+                echo '<input type="number" id="wine_year" name="wine_year"';
+                echo ' value="' . esc_attr( $wine_year ) . '" /></p>';  
             }
             
             //Salva o campo personalizado quando o post é salvo
@@ -184,22 +192,13 @@
                 /* OK, its safe for us to save the data now. */
         
                 // Sanitize the user input.
-                $mydata = sanitize_text_field( $_POST['price'] );
+                $wine_price = sanitize_text_field( $_POST['wine_price'] );
+                $wine_year = sanitize_text_field( $_POST['wine_year'] );
         
                 // Update the meta field.
-                update_post_meta( $post_id, '_my_meta_value_key', $mydata );   
-            }
-            
-            function wine_filter($content) {
-                global $post;
-                if(get_post_type($post) == 'wine') {
-                $key = '_my_meta_value_key';
-                $price = get_post_meta($post->ID, $key, true);
-                $custom_content = 'R$ ' . $price;
+                update_post_meta( $post_id, 'wine_price', $wine_price );
+                update_post_meta( $post_id, 'wine_year', $wine_year );
                 
-                $content = $content . $custom_content;
-                }
-                return $content;
             }
         } // END class Vino_a_la_mano
     } // END if(!class_exists('Vino_a_la_mano'))
