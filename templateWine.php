@@ -48,13 +48,13 @@ get_header(); ?>
         $term_aux ='';
         if ($posts) {
             
-            echo '<h3>Categoria: ' . $category->name . ' ' . $category->term_id . ' </h3> ';  
+            echo '<h3>Categoria: ' . $category->name . ' ' . $category->term_id . ' ' . $category->parent . ' </h3> ';  
             foreach($posts as $post) {
                 $terms = get_the_terms($post->id, 'wine');
                 foreach($terms as $term) {
                     if($category->name != $term->name && $term_aux != $term->name) {
                         $term_aux = $term->name;
-                        echo '<h4>Subcategoria: ' . $term->name . ' ' . $term->term_id . '</h4> ';  
+                        echo '<h4>Subcategoria: ' . $term->name . ' ' . $term->term_id . ' ' . $term->parent . '</h4> ';  
                         
                         
                     }                      
