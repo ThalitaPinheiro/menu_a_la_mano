@@ -43,7 +43,7 @@ get_header(); ?>
 
     foreach($categories as $category) {
         
-/*        $args = array(
+        $args = array(
             'showposts' => -1,
             'tax_query'  => array(
                 array(
@@ -54,12 +54,12 @@ get_header(); ?>
             'post_type' => 'wine'
         );
 
-        $posts = get_posts($args);*/
+        $posts = get_posts($args);
     
-        
+        if ($posts) {
             
-            echo '<h3>Categoria: ' . $category->name.' </p> ';  
-        
+            echo '<h3>' . $category->name.' </p> ';  
+        }
         
         $subcat_args = array(
             'orderby'   => 'name',
@@ -70,7 +70,7 @@ get_header(); ?>
         $subcategories = get_terms('wine', $subcat_args);
     
         foreach($subcategories as $subcategory) {
-        /*        $args = array(
+                $args = array(
                     'showposts' => -1,
                     'tax_query'  => array(
                         array(
@@ -83,10 +83,10 @@ get_header(); ?>
     
         $posts = get_posts($args);
     
-        if ($posts) {*/
+        if ($posts) {
             
-            echo '<h4>: ' . $subcategory->name.'</h4> ';  
-/*                
+            echo '<h4>' . $subcategory->name.'</h4> ';  
+                
               echo '<ul>';
               foreach($posts as $post) {
                     the_title();
@@ -94,9 +94,9 @@ get_header(); ?>
                     the_content();
                     echo '</div><br/><br/>';
               } // foreach($posts
-              echo '</ul>';*/
+              echo '</ul>';
      
-           // } // if ($posts
+            } // if ($posts
         } // foreach $subcategories
       } // foreach($categories
 
