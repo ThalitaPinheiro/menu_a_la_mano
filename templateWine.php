@@ -59,7 +59,7 @@ get_header(); ?>
         if ($posts) {
             
             echo '<h3>' . $category->name.' </p> ';  
-        }
+        
         
         $subcat_args = array(
             'orderby'   => 'name',
@@ -97,6 +97,7 @@ get_header(); ?>
               echo '</ul>';
      
             } // if ($posts
+        }
         } // foreach $subcategories
       } // foreach($categories
 
