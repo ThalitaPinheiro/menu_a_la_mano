@@ -234,14 +234,6 @@
                 }
                 return $content;
             }
-            
-            //Função que coloca um cardápio/prato como rascunho (para de exibi-lo)
-            function expire_food($post) {
-                if(get_post_type($post) == 'food') {
-                    $food_exit_date = get_post_meta($id,'food_exit_date',true);
-                
-                }
-            }
         } // END class Comida_a_la_mano
     } // END if(!class_exists('Comida_a_la_mano'))
 
