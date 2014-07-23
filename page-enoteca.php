@@ -8,6 +8,7 @@
 			<h1 class="content-title"><?php single_cat_title(''); ?></h1>
 			<div class="outside overlay-box">
 				<div class="inside overlay-box">
+                    <p>Enoteca</p>
 					<h2 class="dotted-title">Carta de vinhos</h2>
 					<div class="scroll-pane">
 						<div style="clear: both;"></div>
