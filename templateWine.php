@@ -1,90 +1,84 @@
 <?php
-/**
- * Template Name: Carta de vinhos
- *
- * Description: A page template that provides a key component of WordPress as a CMS
- * by meeting the need for a carefully crafted introductory page. The front page template
- * in Twenty Twelve consists of a page content area for adding text, images, video --
- * anything you'd like -- followed by front-page-only widgets in one or two columns.
- *
- * @package WordPress
- * @subpackage teste
- * @since teste
+/* Template Name: Carta de vinhos
  */
+    get_header(); ?>
 
-get_header(); ?>
-
-	<div id="primary" class="site-content">
-		<div id="content" role="main">
-            <h1>Enoteca</h1>
-            <p></p>
-            <h2> Carta de Vinhos</h2>
-            <p></p>
-			<?php        
+	<section role="main" id="conteudo">
+		<div class="wrapper">
+			<h1 class="content-title"><?php single_cat_title(''); ?></h1>
+			<div class="outside overlay-box">
+				<div class="inside overlay-box">
+					<h2 class="dotted-title">Carta de vinhos</h2>
+					<div class="scroll-pane">
+						<div style="clear: both;"></div>
+                        <?php        
     
-    $cat_args = array(
-        'orderby'   => 'name',  //organizar categorias por nome
-        'order'     => 'ASC',   //ordem ascendente
-        'parent'    => 0        //Não possui categoria pai.
-      );
-    
-    //Retorna array de categorias/taxonomy do tipo 'wine'
-    $categories = get_terms('wine', $cat_args);
-
-
-    foreach($categories as $category) {
-        
-        $args = array(
-            'tax_query'  => array(
-                array(
-                    'taxonomy'  => 'wine',
-                    'field'     => 'term_id',
-                    'terms'     => $category->term_id)
-            ),
-            'post_type' => 'wine'
-        );
-
-        $posts = get_posts($args);
-        $term_aux ='';
-        if ($posts) {
-            
-            echo '<h3>Categoria: ' . $category->name . ' ' . $category->term_id . ' ' . $category->parent . ' </h3> ';  
-            foreach($posts as $post) {
-                $terms = get_the_terms($post->id, 'wine');
-                foreach($terms as $term) {
-                    if($category->name != $term->name && $term_aux != $term->name) {
-                        $term_aux = $term->name;
-                        echo '<h4>Subcategoria: ' . $term->name . ' ' . $term->term_id . ' ' . $term->parent . '</h4> ';  
+                            $cat_args = array(
+                                'orderby'   => 'name',  //organizar categorias por nome
+                                'order'     => 'ASC',   //ordem ascendente
+                                'parent'    => 0        //Não possui categoria pai.
+                              );
+                            
+                            //Retorna array de categorias/taxonomy do tipo 'wine'
+                            $categories = get_terms('wine', $cat_args);
                         
+                            foreach($categories as $category) {                                
+                                $args = array(
+                                    'tax_query'  => array(
+                                        array(
+                                            'taxonomy'  => 'wine',
+                                            'field'     => 'term_id',
+                                            'terms'     => $category->term_id)
+                                    ),
+                                    'post_type' => 'wine'
+                                );
                         
-                    }                      
-                }
-                echo '<ul>';
-                the_title();
-                echo '<br/><br/><div class="entry-content">';
-                the_content();
-                echo '</div><br/><br/>';
-                echo '</ul>';              
-            }
-        }
-        
-      } // foreach($categories
-            ?>
-            <p></p>
-            <p>*3005 Taxa de Rolha R$ 40,00</p>    
-            <p>** Legenda Pontuações</p>
-            <p>WS ‒ Wine Spectator</p>
-            <p>RP ‒ Robert Parker</p>
-            <p>GR ‒ Guia Gamero Rosso (1 a 3 ᴪ)</p>
-            <p>W&S ‒ Wine & Spirits</p>
-            <p>DEC ‒ Decanter (1 a 5 *)</p>
-            <p>WE ‒ Wine Enthusiast</p>    
-            <p>JR ‒ Jancis Robinson (0 a 20)</p>    
-		</div><!-- #content -->
-	</div><!-- #primary -->
+                                $posts = get_posts($args);
+                                $term_aux ='';
+                                if ($posts) {
+                                    echo '<h3 class="wine-country">' . $category->name . '</h3>';  
+                                    foreach($posts as $post) {
+                                        $terms = get_the_terms($post->id, 'wine');
+                                        foreach($terms as $term) {
+                                            if($category->name != $term->name && $term_aux != $term->name) {
+                                                $term_aux = $term->name;
+                                                echo '<h4 class="wine-country">' . $term->name . '</h4> ';  
+                                            }                      
+                                        }
+                                        
+                                        $key = '_my_meta_value_key';
+                                        $custom_fields = get_post_custom($post->ID, $key, true);
+                                        $wine_year = $custom_fields['wine_year'][0];
+                                        
+                                        echo '<div class="wine-item">
+                                                <h4 class="wine-name">' . the_title('','',false) . '</h4>
+                                                <p class="wine-year">' . $wine_year . '</p>
+                                                <p class="wine-description">' . strip_tags($post->post_content) . '</p>
+                                            </div>';                
+                                    }
+                                }
+                                
+                              } // foreach $categories
+                        ?>
+						
+						<div class="labels">
+							<p>*3005 <strong>Taxa de Rolha R$ 40,00</strong></p>
+							<p><strong>** Legenda Pontuações</strong></p>
+							<ul class="list-of-wines">
+								<li><strong>WS ‒ Wine Spectator</strong></li>
+								<li><strong>RP ‒ Robert Parker</strong></li>
+								<li><strong>GR ‒ Guia Gamero Rosso (1 a 3 ᴪ)</strong></li>
+								<li><strong>W&amp;S ‒ Wine &amp; Spirits</strong></li>
+								<li><strong>DEC ‒ Decanter (1 a 5 *)</strong></li>
+								<li><strong>WE ‒ Wine Enthusiast</strong></li>
+								<li><strong>JR ‒ Jancis Robinson (0 a 20)</strong></li>
+							</ul>
+						</div>
 
-<?php get_sidebar( 'front' ); ?>
-<?php get_footer();
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-//este conteudo deve ser inserido na pasta "page-templates do tema ativo 
-?>
+<?php get_footer(); ?>
