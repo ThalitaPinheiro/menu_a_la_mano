@@ -17,7 +17,7 @@
                     <div class="tabbable boxed parentTabs">
 						<ul class="nav nav-tabs">
 							<?php
-								lista_categorias('food');
+								lista_categorias_food();
 							?>
 						</ul>
                         <div class="tab-content">
@@ -52,7 +52,7 @@
                             <div class="tabbable">
                                 <ul class="nav nav-tabs">';
                     
-                    lista_subcategorias('food', $category->term_id);
+                    lista_subcategorias_food($category->term_id);
                     
                     $subcat_args = array(
                         'orderby'   => 'name',
@@ -123,13 +123,13 @@
 <?php get_footer();
                 
     //Lista Categorias customizadas
-	function lista_categorias($taxonomy) {
+	function lista_categorias_food() {
         $cat_args = array(
             'orderby'   => 'name',  
             'order'     => 'ASC',   
             'parent'    => 0        //Não possui categoria pai.
           );
-        $categories = get_terms($taxonomy, $cat_args);
+        $categories = get_terms('food', $cat_args);
         $count_category = 0;
         foreach($categories as $category) {
             $args = array(
@@ -154,14 +154,14 @@
     }
 
     //Lista SubCategorias customizadas
-	function lista_subcategorias($taxonomy, $parent_id) {               
+	function lista_subcategorias_food($parent_id) {               
         $subcat_args = array(
             'orderby'   => 'name',
             'order'     => 'ASC',
             'parent'    => $parent_id   
         );
         //Retorna array de categorias/taxonomy do tipo 'food'
-        $subcategories = get_terms($taxonomy, $subcat_args);
+        $subcategories = get_terms('food', $subcat_args);
         $count_subcat = 0;
         foreach($subcategories as $subcategory) {
             $args = array(
