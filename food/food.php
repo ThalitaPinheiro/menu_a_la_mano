@@ -43,7 +43,6 @@
                 //Adiciona campo personalizado
                 add_action("admin_init", array($this, 'food_meta_box'));
                 add_action('save_post', array($this, 'save_custom_food'));
-                add_filter('the_content', array($this, 'food_filter'));
             } // END public function __construct
 
             // Define o tipo de post Carta de Vinhos
@@ -119,7 +118,7 @@
             function food_meta_box() {
                 
                 add_meta_box(
-                    'food_price',       //Nome do metabox
+                    'food_meta_box',       //Nome do metabox
                     __('Outras informações (exceto A la Carte)'),        //Título da Caixa do campo personalizado
                     array($this, 'food_meta'),   //Função que será chamada para exibir o conteúdo
                     'food',             //Tipo de post que vai ter esse campo personalizado
@@ -143,7 +142,7 @@
                     $food_enter_date = current_time('d/m/Y');
                 }
                 if(empty($food_exit_date)) {
-                    $food_exit_date = current_time('d/m/Y');
+                    $food_exit_date = date('d/m/Y', mktime(0, 0, 0, date("m"), date("d")+7, date("Y")));
                 }
                 // Display the form, using the current value.
                 echo '<label for="food_price">';
@@ -202,9 +201,7 @@
                     if ( ! current_user_can( 'edit_post', $post_id ) )
                         return $post_id;
                 }
-        
                 /* OK, its safe for us to save the data now. */
-                
                 // Sanitize the user input.
                 $food_price = sanitize_text_field( $_POST['food_price'] );
                 $food_enter_date = sanitize_text_field( $_POST['food_enter_date'] );
@@ -213,26 +210,7 @@
                 // Update the meta field.
                 update_post_meta( $post_id, 'food_price', $food_price );
                 update_post_meta( $post_id, 'food_enter_date', $food_enter_date );
-                update_post_meta( $post_id, 'food_exit_date', $food_exit_date );
-                
-            }
-            
-            //Mostra as informações adicionais
-            function food_filter($content) {
-                global $post;
-                if(get_post_type($post) == 'food') {
-                    $key = '_my_meta_value_key';
-                    
-                    $custom_fields = get_post_custom($post->ID, $key, true);
-                    $food_price = $custom_fields['food_price'][0];
-                    $food_enter_date = $custom_fields['food_enter_date'][0];
-                    $food_exit_date = $custom_fields['food_exit_date'][0];
-                    
-                    $custom_content = 'R$ ' . $food_price;
-                    
-                    $content = $content . $custom_content;
-                }
-                return $content;
+                update_post_meta( $post_id, 'food_exit_date', $food_exit_date );   
             }
         } // END class Comida_a_la_mano
     } // END if(!class_exists('Comida_a_la_mano'))

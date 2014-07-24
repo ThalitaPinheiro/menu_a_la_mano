@@ -5,7 +5,7 @@
 
 	<section role="main" id="conteudo">
 		<div class="wrapper">
-			<h1 class="content-title"><?php single_cat_title(''); ?></h1>
+			<h1 class="content-title"><?php the_title(); ?></h1>
 			<div class="outside overlay-box">
 				<div class="inside overlay-box">
                     <p>Enoteca</p>
