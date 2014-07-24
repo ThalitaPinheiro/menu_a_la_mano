@@ -19,11 +19,7 @@
 							<?php
 								lista_categorias('food');
 							?>
-						</ul>
-						<div class="tab-content">
-                            <?php
-                                lista_subcategorias('food');
-                            ?>
+						</ul>                            
 <?php
             $cat_args = array(
                 'orderby'   => 'name',  //organizar categorias por nome
@@ -45,7 +41,19 @@
                     'post_type' => 'food'
                 );
                 $posts = get_posts($args);
-                if ($posts) {
+                if ($posts) {    
+                    echo '<div class="tab-content">';
+                    $fade = '';
+                    if($count_category == 0){
+                        $fade = ' active in';
+                        $count_category = 1;
+                    }
+                    echo '<div class="tab-pane' . $fade . '" id="set-' . $category->slug . '">
+                            <div class="tabbable">
+                                <ul class="nav nav-tabs">';
+                    
+                    lista_subcategorias('food', $category->term_id);
+                    
                     $subcat_args = array(
                         'orderby'   => 'name',
                         'order'     => 'ASC',
@@ -97,6 +105,8 @@
                         echo '</div>';
                     } //subcategoria
                 }
+                echo '</div>
+                </div>';
       } // foreach $categories
 ?>
 
@@ -119,71 +129,59 @@
         $categories = get_terms($taxonomy, $cat_args);
         $count_category = 0;
         foreach($categories as $category) {
-            $class = '';
-            if($count_category == 0) {
-                $class = ' class="active"';
-                $count_category = 1;
-            }
-        echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
-        }
-    }
-
-    //Lista SubCategorias customizadas
-	function lista_subcategorias($category){
-        $cat_args = array(
-            'orderby'   => 'name',
-            'order'     => 'ASC',
-            'parent'    => 0        //Não possui categoria pai.
-          );
-        $categories = get_terms('food', $cat_args);
-        $count_category = 0;
-        echo '<div class="tab-content">';
-        foreach($categories as $category) {
-            $fade = '';
-            if($count_category == 0){
-                $fade = ' active in';
-                $count_category = 1;
-            }
-            echo '<div class="tab-pane' . $fade . '" id="set-' . $category->slug . '">
-                    <div class="tabbable">
-                        <ul class="nav nav-tabs">';
-            $subcat_args = array(
-                'orderby'   => 'name',
-                'order'     => 'ASC',
-                'parent'    => $category->term_id   
-              );
-            
-            //Retorna array de categorias/taxonomy do tipo 'food'
-            $subcategories = get_terms('food', $subcat_args);
-            $count_subcat = 0;
-            foreach($subcategories as $subcategory) {
-                $args = array(
+            $args = array(
                     'tax_query'  => array(
                         array(
                             'taxonomy'  => 'food',
                             'field'     => 'term_id',
-                            'terms'     => $subcategory->term_id)
+                            'terms'     => $category->term_id)
                     ),
                     'post_type' => 'food'
                 );
-        
-                $posts = get_posts($args);
-                if ($posts) {
-                    $class = '';
-                    if($count_subcat == 0) {
-                        $class = 'active';
-                        $count_subcat = 1;
-                    }
-                    //lista Subcategorias
-                    echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategory->name . '</a></li>';
+            $posts = get_posts($args);
+            if ($posts) {        
+                $class = '';
+                if($count_category == 0) {
+                    $class = ' class="active"';
+                    $count_category = 1;
                 }
+                echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
             }
-            echo '</ul>';
-            // conteudo
-            
-            echo '</div>
-            </div>';
-            
         }
-	}
+    }
+
+    //Lista SubCategorias customizadas
+	function lista_subcategorias($taxonomy, $parent_id) {               
+        $subcat_args = array(
+            'orderby'   => 'name',
+            'order'     => 'ASC',
+            'parent'    => $parent_id   
+        );
+        //Retorna array de categorias/taxonomy do tipo 'food'
+        $subcategories = get_terms($taxonomy, $subcat_args);
+        $count_subcat = 0;
+        foreach($subcategories as $subcategory) {
+            $args = array(
+                'tax_query'  => array(
+                    array(
+                        'taxonomy'  => 'food',
+                        'field'     => 'term_id',
+                        'terms'     => $subcategory->term_id)
+                ),
+                'post_type' => 'food'
+            );
+    
+            $posts = get_posts($args);
+            if ($posts) {
+                $class = '';
+                if($count_subcat == 0) {
+                    $class = 'active';
+                    $count_subcat = 1;
+                }
+                //lista Subcategorias
+                echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategory->name . '</a></li>';
+            }
+        }
+        echo '</ul>';
+    }
 ?>
