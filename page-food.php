@@ -19,7 +19,8 @@
 							<?php
 								lista_categorias('food');
 							?>
-						</ul>                            
+						</ul>
+                        <div class="tab-content">
 <?php
             $cat_args = array(
                 'orderby'   => 'name',  //organizar categorias por nome
@@ -42,7 +43,6 @@
                 );
                 $posts = get_posts($args);
                 if ($posts) {    
-                    echo '<div class="tab-content">';
                     $fade = '';
                     if($count_category == 0){
                         $fade = ' active in';
@@ -63,6 +63,7 @@
                     //Retorna array de categorias/taxonomy do tipo 'food'
                     $subcategories = get_terms('food', $subcat_args);
                     $count_subcategory = 0;
+                    echo '<div class="tab-content">';
                     foreach($subcategories as $subcategory) {
                         $args = array(
                             'tax_query'  => array(
@@ -75,8 +76,12 @@
                         );
                         $posts = get_posts($args);
                         if ($posts) {
-                            echo '<div class="tab-content">';
-                            $count_post = 0;
+                            $fade = '';
+                            if($count_subcategory == 0) {
+                                $fade = ' active in';
+                                $count_subcategory = 1;
+                            }
+                            echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
                             foreach($posts as $post) {
                                 //recupera informações extras
                                 $key = '_my_meta_value_key';
@@ -88,22 +93,20 @@
                                 if($food_price) {
                                     $food_price = ' R$ ' . $food_price;
                                 }
-                                if($today >= $food_enter_date && $today <= $food_exit_date || $category->name=='À la Carte') {
-                                    $fade = '';
-                                    if($count_post == 0) {
-                                        $fade = ' active in';
-                                        $count_post = 1;
-                                    }
-                                    echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">
-                                        <p class="dish-name">' . the_title('','',false) .
+                                if($category->name == 'À la Carte') {
+                                     echo '<p class="dish-name">' . the_title('','',false) . '</p>
+                                            <p>' . strip_tags($post->post_content) . '</p>';
+                                } elseif($today >= $food_enter_date && $today <= $food_exit_date) {
+                                     echo '<p class="dish-name">' . the_title('','',false) .
                                             $food_price . '</p>
-                                            <p>' . strip_tags($post->post_content) . '</p>
-                                        </div>';                                              
+                                            <p>' . strip_tags($post->post_content) . '</p>';
                                 }
+                                
                             } //Post
+                            echo '</div>';
                         }
-                        echo '</div>';
                     } //subcategoria
+                    echo '</div>';
                 }
                 echo '</div>
                 </div>';
