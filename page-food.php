@@ -10,13 +10,11 @@
 			<h1 class="content-title"><?php the_title(); ?></h1>
 			<div class="outside overlay-box">
 				<div class="inside overlay-box">
+                    <?php 
+                            the_content(); 
+                        endwhile; endif;
+                    ?>
                     <div class="tabbable boxed parentTabs">
-						<ul class="nav nav-tabs">
-    <?php 
-            the_content(); 
-        endwhile; endif;
-    ?>
-					<div class="tabbable boxed parentTabs">
 						<ul class="nav nav-tabs">
 							<?php
 								lista_categorias('food');
@@ -26,10 +24,7 @@
                             <?php
                                 lista_subcategorias('food');
                             ?>
-                        </ul>
-                        <div class="tab-content">
-                                    <?php
-                                        //get_posts_category();
+<?php
             $cat_args = array(
                 'orderby'   => 'name',  //organizar categorias por nome
                 'order'     => 'ASC',   //ordem ascendente
@@ -45,52 +40,65 @@
                         array(
                             'taxonomy'  => 'food',
                             'field'     => 'term_id',
-                            'showposts' => 9999,
                             'terms'     => $category->term_id)
                     ),
                     'post_type' => 'food'
                 );
-        
                 $posts = get_posts($args);
-                $term_aux ='';
                 if ($posts) {
-                    $count_post = 0;
-                foreach($posts as $post) {
-                    $terms = get_the_terms($post->id, 'food');
-                    foreach($terms as $term) {
-                        if($category->name != $term->name && $term_aux != $term->name) {
-                            $term_aux = $term->name;
-                        }                      
-                    }
+                    $subcat_args = array(
+                        'orderby'   => 'name',
+                        'order'     => 'ASC',
+                        'parent'    => $category->term_id
+                      );
                     
-                    $key = '_my_meta_value_key';
-                    $custom_fields = get_post_custom($post->ID, $key, true);
-                    $food_price = $custom_fields['food_price'][0];
-                    $food_enter_date = strtotime($custom_fields['food_enter_date'][0]);
-                    $food_exit_date = strtotime($custom_fields['food_exit_date'][0]);
-                    $today = strtotime(current_time('d/m/Y'));
-                    if($food_price) {
-                        $food_price = ' R$ ' . $food_price;
-                    }
-                    if($today >= $food_enter_date && $today <= $food_exit_date || $category->name=='À la Carte') {
-                        $fade = '';
-                        if($count_post == 0) {
-                            $fade = ' active in';
-                            $count_post = 1;
+                    //Retorna array de categorias/taxonomy do tipo 'food'
+                    $subcategories = get_terms('food', $subcat_args);
+                    $count_subcategory = 0;
+                    foreach($subcategories as $subcategory) {
+                        $args = array(
+                            'tax_query'  => array(
+                                array(
+                                    'taxonomy'  => 'food',
+                                    'field'     => 'term_id',
+                                    'terms'     => $subcategory->term_id)
+                            ),
+                            'post_type' => 'food'
+                        );
+                        $posts = get_posts($args);
+                        if ($posts) {
+                            echo '<div class="tab-content">';
+                            $count_post = 0;
+                            foreach($posts as $post) {
+                                //recupera informações extras
+                                $key = '_my_meta_value_key';
+                                $custom_fields = get_post_custom($post->ID, $key, true);
+                                $food_price = $custom_fields['food_price'][0];
+                                $food_enter_date = strtotime($custom_fields['food_enter_date'][0]);
+                                $food_exit_date = strtotime($custom_fields['food_exit_date'][0]);
+                                $today = strtotime(current_time('d/m/Y'));
+                                if($food_price) {
+                                    $food_price = ' R$ ' . $food_price;
+                                }
+                                if($today >= $food_enter_date && $today <= $food_exit_date || $category->name=='À la Carte') {
+                                    $fade = '';
+                                    if($count_post == 0) {
+                                        $fade = ' active in';
+                                        $count_post = 1;
+                                    }
+                                    echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">
+                                        <p class="dish-name">' . the_title('','',false) .
+                                            $food_price . '</p>
+                                            <p>' . strip_tags($post->post_content) . '</p>
+                                        </div>';                                              
+                                }
+                            } //Post
                         }
-                        echo '<div class="tab-pane fade' . $fade . '" id="set-' . $term->slug . '">
-                            <p class="dish-name">' . the_title('','',false) .
-                                $food_price . '</p>
-                                <p>' . strip_tags($post->post_content) . '</p>
-                            </div>';                                              
-                    }
+                        echo '</div>';
+                    } //subcategoria
                 }
-            }
-                echo '</div>
-				    </div>
-				</div>';
       } // foreach $categories
-                                    ?>
+?>
 
 						</div>
 					</div>
@@ -170,68 +178,12 @@
                     echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategory->name . '</a></li>';
                 }
             }
+            echo '</ul>';
+            // conteudo
+            
+            echo '</div>
+            </div>';
+            
         }
 	}
-
-	// Exibe posts
-function get_posts_category() {
-    //Lista de posts por categoria e subcategoria
-            $cat_args = array(
-                'orderby'   => 'name',  //organizar categorias por nome
-                'order'     => 'ASC',   //ordem ascendente
-                'parent'    => 0        //Não possui categoria pai.
-              );
-            
-            //Retorna array de categorias/taxonomy do tipo 'food'
-            $categories = get_terms('food', $cat_args);
-            $count_category = 0;
-            foreach($categories as $category) {
-                $args = array(
-                    'tax_query'  => array(
-                        array(
-                            'taxonomy'  => 'food',
-                            'field'     => 'term_id',
-                            'showposts' => 9999,
-                            'terms'     => $category->term_id)
-                    ),
-                    'post_type' => 'food'
-                );
-        
-                $posts = get_posts($args);
-                $term_aux ='';
-                if ($posts) {
-                    $count_post = 0;
-                foreach($posts as $post) {
-                    $terms = get_the_terms($post->id, 'food');
-                    foreach($terms as $term) {
-                        if($category->name != $term->name && $term_aux != $term->name) {
-                            $term_aux = $term->name;
-                        }                      
-                    }
-                    
-                    $key = '_my_meta_value_key';
-                    $custom_fields = get_post_custom($post->ID, $key, true);
-                    $food_price = $custom_fields['food_price'][0];
-                    $food_enter_date = strtotime($custom_fields['food_enter_date'][0]);
-                    $food_exit_date = strtotime($custom_fields['food_exit_date'][0]);
-                    $today = strtotime(current_time('d/m/Y'));
-                    if($today >= $food_enter_date && $today <= $food_exit_date || $category->name=='À la Carte') {
-                        $fade = '';
-                        if($count_post == 0) {
-                            $fade = ' active in';
-                            $count_post = 1;
-                        }
-                        echo '<div class="tab-pane fade' . $fade . '" id="set-' . $term->slug . '">
-                            <p class="dish-name">' . the_title('','',false) .
-                                ' R$' . $food_price . '</p>
-                                <p>' . strip_tags($post->post_content) . '</p>
-                            </div>';                                              
-                    }
-                }
-            }
-                echo '</div>
-				    </div>
-				</div>';
-      } // foreach $categories
-    }
 ?>
