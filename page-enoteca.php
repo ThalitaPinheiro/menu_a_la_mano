@@ -5,7 +5,7 @@
 
 	<section role="main" id="conteudo">
 		<div class="wrapper">
-			<h1 class="content-title"><?php the_title(); ?></h1>
+			<h1 class="content-title"><?php single_cat_title(''); ?></h1>
 			<div class="outside overlay-box">
 				<div class="inside overlay-box">
                     <p>Enoteca</p>
@@ -36,7 +36,7 @@
                                 );
                         
                                 $posts = get_posts($args);
-                                $term_aux ='';
+                                $term_aux = '';
                                 if ($posts) {
                                     echo '<h3 class="wine-country">' . $category->name . '</h3>';  
                                     foreach($posts as $post) {
@@ -51,10 +51,16 @@
                                         $key = '_my_meta_value_key';
                                         $custom_fields = get_post_custom($post->ID, $key, true);
                                         $wine_year = $custom_fields['wine_year'][0];
-                                        
+                                        $wine_price = $custom_fields['wine_price'][0];
+                                        $wine_ml = $custom_fields['wine_ml'][0];
+                                        if($wine_ml)
+                                            $wine_ml = $wine_ml . ' ml';
+                                        if($wine_price)
+                                            $wine_price = 'R$ ' . $wine_price;
                                         echo '<div class="wine-item">
                                                 <h4 class="wine-name">' . the_title('','',false) . '</h4>
-                                                <p class="wine-year">' . $wine_year . '</p>
+                                                <p class="wine-year">' . $wine_year . ' ' 
+                                                . $wine_ml . ' ' . $wine_price .  '</p>
                                                 <p class="wine-description">' . strip_tags($post->post_content) . '</p>
                                             </div>';                
                                     }

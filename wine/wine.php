@@ -134,24 +134,30 @@
                 // Add an nonce field so we can check for it later.
                 wp_nonce_field( 'wine_inner_custom_box', 'wine_inner_custom_box_nonce' );
                 
-                $key = '_my_meta_value_key';
-                    
                 $custom_fields = get_post_custom($post->ID);
                 $wine_price = $custom_fields['wine_price'][0];
                 $wine_year = $custom_fields['wine_year'][0];
+                $wine_ml = $custom_fields['wine_ml'][0];
                 
                 // Display the form, using the current value.
                 echo '<label for="wine_price">';
-                _e( 'Preço');
+                _e( 'Preço: R$');
                 echo '</label> ';
                 echo '<input type="number" id="wine_price" name="wine_price"';
                 echo ' value="' . esc_attr( $wine_price ) . '" />';
                 
                 echo '<p><label for="wine_year">';
-                _e( 'Ano');
+                _e( 'Ano:');
                 echo '</label> ';
-                echo '<input type="number" id="wine_year" name="wine_year"';
+                echo '<input type="text" id="wine_year" name="wine_year"';
                 echo ' value="' . esc_attr( $wine_year ) . '" /></p>';  
+                
+                echo '<p><label for="wine_ml">';
+                _e( 'Volume:');
+                echo '</label> ';
+                echo '<input type="number" id="wine_ml" name="wine_ml"';
+                echo ' value="' . esc_attr( $wine_ml ) . '" />ml</p>';  
+
             }
             
             //Salva o campo personalizado quando o post é salvo
@@ -194,10 +200,12 @@
                 // Sanitize the user input.
                 $wine_price = sanitize_text_field( $_POST['wine_price'] );
                 $wine_year = sanitize_text_field( $_POST['wine_year'] );
+                $wine_ml = sanitize_text_field( $_POST['wine_ml'] );
         
                 // Update the meta field.
                 update_post_meta( $post_id, 'wine_price', $wine_price );
                 update_post_meta( $post_id, 'wine_year', $wine_year );
+                update_post_meta( $post_id, 'wine_ml', $wine_year );
                 
             }
         } // END class Vino_a_la_mano
