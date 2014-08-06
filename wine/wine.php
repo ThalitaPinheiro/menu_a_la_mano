@@ -43,6 +43,11 @@
                 //Adiciona campo personalizado
                 add_action("admin_init", array($this, 'wine_meta_box'));
                 add_action('save_post', array($this, 'save_price_wine'));
+                //adapta lista
+                add_filter("manage_edit-wine_columns", array($this, "wine_columns"));
+                add_action("manage_wine_posts_custom_column", array($this, "wine_custom_columns"),10,2);
+                add_action( 'restrict_manage_posts', array($this, 'my_filter_list') );
+                add_filter( 'parse_query', array($this, 'perform_filtering') );
                 
             } // END public function __construct
 
@@ -108,11 +113,11 @@
                     'hierarchical'               => true,
                     'public'                     => true,
                     'show_ui'                    => true,
-                    'show_admin_column'          => false,
+                    'show_admin_column'          => true,
                     'show_in_nav_menus'          => true,
                     'show_tagcloud'              => false,
                 );
-                register_taxonomy( 'wine', array( 'wine' ), $args );
+                register_taxonomy( 'wine_type', array( 'wine' ), $args );
             } // Fim função que cria categoria
             
             //Cria campo personalizado Preço
@@ -208,6 +213,88 @@
                 update_post_meta( $post_id, 'wine_ml', $wine_year );
                 
             }
+
+            function wine_columns($columns){
+                $columns = array(
+                    'cb' => '<input type="checkbox" />',
+                    'title' => __( 'Title' ),
+                    'wine_type' => __( 'Categorias do Vinho' ),
+                    'date' => __( 'Date' )
+                );
+            
+                return $columns;
+            }
+            
+            function wine_custom_columns($column,$post_id) {
+                global $post;
+                switch( $column ) {
+                    case 'wine_type' :
+                        $terms = get_the_terms( $post_id, 'wine_type' );            
+                        /* If terms were found. */
+                        if ( !empty( $terms ) ) {
+                            $out = array();
+                            /* Loop through each term, linking to the 'edit posts' page for the specific term. */
+                            foreach ( $terms as $term ) {
+                                $out[] = sprintf( '<a href="%s">%s</a>',
+                                    esc_url( add_query_arg( array( 'post_type' => 'wine', 'wine_type' => $term->slug ), 'edit.php' ) ),
+                                    esc_html( sanitize_term_field( 'name', $term->name, $term->term_id, 'wine_type', 'display' ) )
+                                );
+                            }
+            
+                            /* Join the terms, separating them with a comma. */
+                            echo join( ', ', $out );
+                        }
+            
+                        /* If no terms were found, output a default message. */
+                        else {
+                            _e( 'Sem categoria' );
+                        }
+            
+                        break;
+            
+                    /* Just break out of the switch statement for everything else. */
+                    default :
+                        break;
+                }    
+            }
+            
+            
+            
+            function my_filter_list() {
+                $screen = get_current_screen();
+                global $wp_query;
+                if ( $screen->post_type == 'wine' ) {
+                    wp_dropdown_categories( array(
+                        'show_option_all' => 'Mostrar todos os Vinhos',
+                        'taxonomy' => 'wine_type',
+                        'name' => 'wine_type',
+                        'orderby' => 'name',
+                        'selected' => ( isset( $wp_query->query['wine_type'] ) ? $wp_query->query['wine_type'] : '' ),
+                        'hierarchical' => true,
+                        'depth' => 3,
+                        'show_count' => false,
+                        'hide_empty' => true,
+                    ) );
+                }
+            }
+            
+            function perform_filtering( $query ) {
+                global $pagenow;
+                $qv = &$query->query_vars;
+                if ($pagenow=='edit.php' &&
+                        isset($qv['taxonomy']) && $qv['taxonomy']=='wine_type' &&
+                        isset($qv['term']) && is_numeric($qv['term'])) {
+                    $term = get_term_by('id',$qv['term'],'wine_type');
+                    $qv['term'] = $term->slug;
+                }
+            }
+            
+
+            
+            
+            
+            
+            
         } // END class Vino_a_la_mano
     } // END if(!class_exists('Vino_a_la_mano'))
 
