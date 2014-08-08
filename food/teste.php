@@ -5,7 +5,7 @@
     <body>
         <div class="wrap">
             <h2>Adicionar novo Cardápio</h2>
-            <form method="post" action="options.php"> 
+            <form method="post" action=""> 
                 <input type="text" name="cardapio">
                 <p>Data de entrada:<input type="date" name="enter_date"></p>
                 <p>Data de saída:<input type="date" name="exit_date"></p>
