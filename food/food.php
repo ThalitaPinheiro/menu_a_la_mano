@@ -45,7 +45,7 @@
                 add_action('save_post', array($this, 'save_custom_food'));
                 
                 //Menu cardapio
-                add_action('admin_menu', array($this, 'register_food_submenu_page'));
+            //    add_action('admin_menu', array($this, 'register_food_submenu_page'));
                 
                 //adapta lista
                 add_filter("manage_edit-food_columns", array($this, "food_columns"));
@@ -55,16 +55,16 @@
             } // END public function __construct
         
             
-            function register_food_submenu_page() {
+        /*    function register_food_submenu_page() {
                 add_submenu_page( 'edit.php?post_type=food', 'Food Submenu Page', 'Food Submenu Page', 'manage_options', 'food-submenu-page', array($this, 'cardapio') );                 
             }
-            
+          */  
             // Define o tipo de post Cardapio
             function food_post_type() {
                 $labels = array(
-                    'name'                => _x( 'Cardápios', 'Post Type General Name'),
-                    'singular_name'       => _x( 'Cardápio', 'Post Type Singular Name'),
-                    'menu_name'           => __( 'Cardápio'),
+                    'name'                => _x( 'Pratos', 'Post Type General Name'),
+                    'singular_name'       => _x( 'Prato', 'Post Type Singular Name'),
+                    'menu_name'           => __( 'Prato'),
                     'parent_item_colon'   => __( 'Parent Item:'),
                     'all_items'           => __( 'Todos os Itens'),
                     'view_item'           => __( 'Visualizar Item'),
@@ -78,7 +78,7 @@
                 );
                 $args = array(
                     'label'               => __( 'food'),
-                    'description'         => __( 'Cardápio'),
+                    'description'         => __( 'Prato'),
                     'labels'              => $labels,
                     'supports'            => array( 'title', 'editor'),
                     'hierarchical'        => true,
@@ -100,10 +100,10 @@
             // Registra tipos de vinho
             function food_taxonomy() {
                 $labels = array(
-                    'name'                       => _x( 'Categorias do Cardápio', 'Taxonomy General Name'),
-                    'singular_name'              => _x( 'Categoria do Cardápio', 'Taxonomy Singular Name'),
-                    'menu_name'                  => __( 'Categoria do Cardápio'),
-                    'all_items'                  => __( 'Todos as Categorias dos Cardápios'),
+                    'name'                       => _x( 'Categorias do Prato', 'Taxonomy General Name'),
+                    'singular_name'              => _x( 'Categoria do Prato', 'Taxonomy Singular Name'),
+                    'menu_name'                  => __( 'Categoria do Prato'),
+                    'all_items'                  => __( 'Todos as Categorias dos Pratos'),
                     'parent_item'                => __( 'Parent Item'),
                     'parent_item_colon'          => __( 'Parent Item:'),
                     'new_item_name'              => __( 'Nome de Nova Categoria'),
