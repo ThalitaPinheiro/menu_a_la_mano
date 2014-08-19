@@ -39,6 +39,8 @@
                 
                 add_action('plugins_loaded', array($this, 'menu_a_la_mano_constants'));
                 add_action('plugins_loaded', array($this, 'menu_a_la_mano_includes'));
+                $plugin_dir = basename(dirname(__FILE__));
+                load_plugin_textdomain( 'post-expirator', null, $plugin_dir.'/languages/' );
             } // END public function __construct
     
             /**
