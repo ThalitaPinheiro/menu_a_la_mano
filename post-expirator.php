@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Plugin Name: -Menu a la Mano Cardapio Expirator
- * Plugin URI:
- * Description: Este plugin ajuda no faz com que os itens de cardapio tenham data para serem "despublicados"
- * Version: 1.0
- * Author: ThalitaPinheiro, danielejcruz
- * Author URI: http://profiles.wordpress.org/thalitapinheiro ; https://github.com/danielejcruz
- * License: GPL2
-*/
 
 /* Load translation, if it exists */
 function postExpirator_init() {

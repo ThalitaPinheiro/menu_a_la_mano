@@ -39,6 +39,7 @@
                 
                 add_action('plugins_loaded', array($this, 'menu_a_la_mano_constants'));
                 add_action('plugins_loaded', array($this, 'menu_a_la_mano_includes'));
+
                 $plugin_dir = basename(dirname(__FILE__));
                 load_plugin_textdomain( 'post-expirator', null, $plugin_dir.'/languages/' );
             } // END public function __construct
@@ -66,6 +67,7 @@
                 require_once(MENU_A_LA_MANO_DIR . 'wine/wine.php');
                 require_once(MENU_A_LA_MANO_DIR . 'food/cardapio.php');
                 require_once(MENU_A_LA_MANO_DIR . 'food/food.php');
+                require_once(MENU_A_LA_MANO_DIR . 'post-expirator.php');
                 //require_once(MENU_A_LA_MANO_DIR . 'template.php');
                 //require_once(MENU_A_LA_MANO_DIR . 'pageofposts.php');
                 
