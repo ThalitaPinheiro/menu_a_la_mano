@@ -40,21 +40,9 @@
                 add_action( 'init', array($this, 'cardapio_post_type'));
                 //Nova categoria
                 add_action( 'init', array($this, 'cardapio_taxonomy'));                
-                //Adiciona campo personalizado
-                add_action("admin_init", array($this, 'cardapio_meta_box'));
-                add_action('save_post', array($this, 'save_custom_cardapio'));
-                
-                //Menu cardapio
-            //    add_action('admin_menu', array($this, 'register_cardapio_submenu_page'));
-                
 
             } // END public function __construct
-        
-            
-        /*    function register_cardapio_submenu_page() {
-                add_submenu_page( 'edit.php?post_type=cardapio', 'cardapio Submenu Page', 'cardapio Submenu Page', 'manage_options', 'cardapio-submenu-page', array($this, 'cardapio') );                 
-            }
-          */  
+
             // Define o tipo de post cardapio
             function cardapio_post_type() {
                 $labels = array(
@@ -114,7 +102,7 @@
                 );
                 $args = array(
                     'labels'                     => $labels,
-                    'hierarchical'               => false,
+                    'hierarchical'               => true,
                     'public'                     => true,
                     'show_ui'                    => true,
                     'show_admin_column'          => false,
@@ -123,91 +111,6 @@
                 );
                 register_taxonomy( 'cardapio_type', array( 'cardapio' ), $args );
             } // Fim função que cria categoria
-            
-            //Cria campo personalizado Preço
-            function cardapio_meta_box() {
-                
-                add_meta_box(
-                    'cardapio_meta_box',       //Nome do metabox
-                    __('Pratos'),        //Título da Caixa do campo personalizado
-                    array($this, 'cardapio_meta'),   //Função que será chamada para exibir o conteúdo
-                    'cardapio',             //Tipo de post que vai ter esse campo personalizado
-                    'normal',           //Local da página de edição onde será exibido o campo personalizado
-                    'high'              //Prioridade de onde vai aparecer a caixa - high, normal ou low
-                 );
-            }
-            
-            //Configura o campos personalizado Preço
-            function cardapio_meta($post) {
-                
-                // Add an nonce field so we can check for it later.
-                wp_nonce_field( 'cardapio_inner_custom_box', 'cardapio_inner_custom_box_nonce' );
-            
-                $custom_fields = get_post_custom($post->ID);
-                
-                // Display the form, using the current value.
-                echo '<label for="cardapio_pratos">';
-                _e( 'Pratos');
-                    $args = array('post_type' => 'food');
-                    // The Query
-                    $the_query = new WP_Query( $args );
-                    
-                    // The Loop
-                    if ( $the_query->have_posts() ) {
-                        echo '<ul>';
-                        while ( $the_query->have_posts() ) {
-                            $the_query->the_post();
-                            echo '<li><input type="checkbox" name="' . get_the_ID() . '" value="' . get_the_ID() . '">' . get_the_title() . '</li>';
-                        }
-                        echo '</ul>';
-                    }
-                    /* Restore original Post Data */
-                    wp_reset_postdata();
-                
-            }
-            
-            //Salva o campo personalizado quando o post é salvo
-            function save_custom_cardapio($post_id) {
-                
-                /*
-                 * We need to verify this came from the our screen and with proper authorization,
-                 * because save_post can be triggered at other times.
-                 */
-                    
-                // Check if our nonce is set.
-                if ( ! isset( $_POST['cardapio_inner_custom_box_nonce'] ) )
-                    return $post_id;
-        
-                $nonce = $_POST['cardapio_inner_custom_box_nonce'];
-        
-                // Verify that the nonce is valid.
-                if ( ! wp_verify_nonce( $nonce, 'cardapio_inner_custom_box' ) )
-                    return $post_id;
-                
-                // If this is an autosave, our form has not been submitted,
-                //     so we don't want to do anything.
-                if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-                    return $post_id;
-        
-                // Check the user's permissions.
-                if ( 'cardapio' == $_POST['post_type'] ) {
-        
-                    if ( ! current_user_can( 'edit_page', $post_id ) )
-                        return $post_id;
-            
-                } else {
-        
-                    if ( ! current_user_can( 'edit_post', $post_id ) )
-                        return $post_id;
-                }
-                /* OK, its safe for us to save the data now. */
-                // Sanitize the user input.
-
-        
-                // Update the meta field.
-  
-            }
-            
             
             
             

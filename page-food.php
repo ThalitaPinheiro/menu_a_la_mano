@@ -66,6 +66,7 @@
                     echo '<div class="tab-content">';
                     foreach($subcategories as $subcategory) {
                         $args = array(
+                            'posts_per_page' => -1,
                             'tax_query'  => array(
                                 array(
                                     'taxonomy'  => 'food',
@@ -83,23 +84,11 @@
                             }
                             echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
                             foreach($posts as $post) {
-                                //recupera informações extras
-                                $key = '_my_meta_value_key';
-                                $custom_fields = get_post_custom($post->ID, $key, true);
-                                $food_price = $custom_fields['food_price'][0];
-                                $food_enter_date = strtotime($custom_fields['food_enter_date'][0]);
-                                $food_exit_date = strtotime($custom_fields['food_exit_date'][0]);
-                                $today = strtotime(current_time('d/m/Y'));
-                                if($food_price) {
-                                    $food_price = ' R$ ' . $food_price;
-                                }
-                                if($category->name == 'À la Carte') {
+                                if($category->name == 'À La Carte') {
                                      echo '<p class="dish-name">' . the_title('','',false) . '</p>
                                             <p>' . strip_tags($post->post_content) . '</p>';
-                                } elseif($today >= $food_enter_date && $today <= $food_exit_date) {
-                                     echo '<p class="dish-name">' . the_title('','',false) .
-                                            $food_price . '</p>
-                                            <p>' . strip_tags($post->post_content) . '</p>';
+                                } else {
+                                    verificaCardapio($category, $post->ID);
                                 }
                                 
                             } //Post
@@ -120,5 +109,6 @@
 		</div>
 	</section>
 
-<?php get_footer();
+<?php
+get_footer();
 ?>

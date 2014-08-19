@@ -71,10 +71,10 @@
 	//Definições de envio de E-mail
 	global $sa_options;
 	$sa_settings = get_option('sa_options', $sa_options);
-	//define(host,$sa_settings['host']);
-	//define(emailautenticacao,$sa_settings['emailautenticacao']);
-	//define(emailautenticacaosenha,$sa_settings['emailautenticacaosenha']);
-	//define(emailsend,$sa_settings['emailsend']);
+//	define(host,$sa_settings['host']);
+//	define(emailautenticacao,$sa_settings['emailautenticacao']);
+//	define(emailautenticacaosenha,$sa_settings['emailautenticacaosenha']);
+//	define(emailsend,$sa_settings['emailsend']);
 
 	//Removendo informações da pg inicial do admin
 	function DelSecoesPainel(){
@@ -190,6 +190,7 @@
 	}
 
     //Lista Categorias customizadas da taxonomy food
+    //Utilizada pela page-food.php
 	function lista_categorias_food() {
         $cat_args = array(
             'orderby'   => 'name',  
@@ -213,14 +214,33 @@
                 $class = '';
                 if($count_category == 0) {
                     $class = ' class="active"';
+                    echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
                     $count_category = 1;
+                } else {
+                    $card_args = array(
+                        'post_type' => 'cardapio',
+                        'tax_query'  => array(
+                                        array(
+                                            'taxonomy'  => 'cardapio_type',
+                                            'field'     => 'slug',
+                                            'terms'     => $category->slug)
+                                    ),
+                        'post_status' => 'publish');
+                    $cardapios = new WP_Query( $card_args );
+                    if ($cardapios->have_posts()) {
+                        $cardapios->the_post();
+                        $pratos = get_field('pratos');
+                        if( $pratos ) {
+                            echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
+                        }
+                    }
                 }
-                echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
             }
         }
     }
 
     //Lista SubCategorias customizadas da taxonomy food
+    //Utilizada pela page-food.php
 	function lista_subcategorias_food($parent_id) {               
         $subcat_args = array(
             'orderby'   => 'name',
@@ -230,8 +250,13 @@
         //Retorna array de categorias/taxonomy do tipo 'food'
         $subcategories = get_terms('food', $subcat_args);
         $count_subcat = 0;
+        $subcategoria = '';
+        $pratos = retornaPratos($parent_id);
+        if(!$pratos)
+            $pratos = '';
         foreach($subcategories as $subcategory) {
             $args = array(
+                'post__in' => $pratos,  
                 'tax_query'  => array(
                     array(
                         'taxonomy'  => 'food',
@@ -240,7 +265,6 @@
                 ),
                 'post_type' => 'food'
             );
-    
             $posts = get_posts($args);
             if ($posts) {
                 $class = '';
@@ -249,13 +273,86 @@
                     $count_subcat = 1;
                 }
                 //lista Subcategorias
-                echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategory->name . '</a></li>';
+                switch($subcategory->name) {
+                    case 'Massas Artesanais':
+                        $subcategoria = 'Massas<span class="clear-row"></span>Artesanais';
+                        break;
+                    case 'Peixes e Frutos do Mar':
+                        $subcategoria = 'Peixes e<span class="clear-row"></span>Frutos do Mar';
+                        break;
+                    case 'Carnes e Aves':
+                        $subcategoria = 'Carnes e<span class="clear-row"></span>Aves';
+                        break;
+                    case 'Especial da casa para 2 pessoas':
+                        $subcategoria = 'Especial da casa<span class="clear-row"></span>para 2 pessoas';           
+                        break;
+                    default:
+                        $subcategoria = $subcategory->name;
+                }
+                
+                echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategoria . '</a></li>';
             }
         }
         echo '</ul>';
     }
 
+    //Retorna array com os pratos da categoria
+    function retornaPratos($category) {
+        $args = array(
+            'post_type' => 'cardapio',
+            'tax_query'  => array(
+                            array(
+                                'taxonomy'  => 'cardapio_type',
+                                'field'     => 'id',
+                                'terms'     => $category)
+                        ),
+            'post_status' => 'publish');
+        $cardapios = new WP_Query( $args );
+        if ($cardapios->have_posts()) {
+            while ( $cardapios->have_posts() ) {
+                $cardapios->the_post();
+                $pratos = get_field('pratos');
+                if( $pratos ):
+                    $valor = get_field('valor');
+                    echo '<p class="dish-value">R$ ' . $valor . '</p>';
+                    $pratos_id = array();
+                    foreach( $pratos as $p ):
+                        array_push($pratos_id, $p->ID);
+                    endforeach;
+                    return $pratos_id;
+                endif;
+            }
+        }
+        return false;
+    }
 
+    //Exibe prato
+    function verificaCardapio($category, $post_id) {
+        $args = array(
+            'post_type' => 'cardapio',
+            'tax_query'  => array(
+                            array(
+                                'taxonomy'  => 'cardapio_type',
+                                'field'     => 'slug',
+                                'terms'     => $category->slug)
+                        ),
+            'post_status' => 'publish');
+        $cardapios = new WP_Query( $args );
+        if ($cardapios->have_posts()) {        
+            while ( $cardapios->have_posts() ) {
+                $cardapios->the_post();
+                $pratos = get_field('pratos');
+                if( $pratos ):
+                    foreach( $pratos as $p ):
+                        if ($p->ID == $post_id) {
+                            echo '<p class="dish-name">' .  get_the_title($p->ID) . '</p>
+                                <p>' . strip_tags($p->post_content) . '</p>';
+                        }
+                    endforeach;
+                endif;
+            }
+        }
+    }
 
 
 	// Função de Cadastro no banco
@@ -312,13 +409,13 @@
 			<html>
 			<body>
 				<center>
-					<img src="' . get_option('home') . '/wp-content/themes/serafini/images/logos/logo-login.png" 
+					<img src="' . get_settings('home') . '/wp-content/themes/serafini/images/logos/logo-login.png" 
 					width="320" height="80" alt="' . get_bloginfo('name') . '" title="' . get_bloginfo('name') . '" />
 				</center>
 				
 				<br/><br/>
 
-				<p style="text-align: center; width: 100%;">E-mail de contato enviado através do site <a href="' . get_option('home') . '" 
+				<p style="text-align: center; width: 100%;">E-mail de contato enviado através do site <a href="' . get_settings('home') . '" 
 				title="Acessar Site">' . get_bloginfo('name') . '</a></p><br/></br>
 
 				<table style="width: 100%; float: left; border: 1px solid #272c37;">
@@ -350,25 +447,25 @@
 		if($mail->Send()){
 			
 			if($tipo == 'reserva'){
-				//header('Location: ' . get_option('home') . '/reserva-enviada');
-				header('Location: ' . get_option('home') . '/?p=43');
+				//header('Location: ' . get_settings('home') . '/reserva-enviada');
+				header('Location: ' . get_settings('home') . '/?p=43');
 			}
 
 			if($tipo == 'evento'){
-				//header('Location: ' . get_option('home') . '/evento-enviado');
-				header('Location: ' . get_option('home') . '/?p=47');
+				//header('Location: ' . get_settings('home') . '/evento-enviado');
+				header('Location: ' . get_settings('home') . '/?p=47');
 			}
 
 		}else{
 
 			if($tipo == 'reserva'){
-				//header('Location: ' . get_option('home') . '/reserva-nao-enviada');
-				header('Location: ' . get_option('home') . '/?p=45');
+				//header('Location: ' . get_settings('home') . '/reserva-nao-enviada');
+				header('Location: ' . get_settings('home') . '/?p=45');
 			}
 
 			if($tipo == 'evento'){
-				//header('Location: ' . get_option('home') . '/evento-nao-enviado');
-				header('Location: ' . get_option('home') . '/?p=49');
+				//header('Location: ' . get_settings('home') . '/evento-nao-enviado');
+				header('Location: ' . get_settings('home') . '/?p=49');
 			}
 
 		}
