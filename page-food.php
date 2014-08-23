@@ -25,80 +25,78 @@
             $cat_args = array(
                 'orderby'   => 'name',  //organizar categorias por nome
                 'order'     => 'ASC',   //ordem ascendente
-                'parent'    => 0        //Não possui categoria pai.
               );
             
             //Retorna array de categorias/taxonomy do tipo 'food'
-            $categories = get_terms('food', $cat_args);
+            $categories = get_terms('cardapio', $cat_args);
             $count_category = 0;
             foreach($categories as $category) {
                 $args = array(
+                    'post_type' => 'food',
                     'tax_query'  => array(
                         array(
-                            'taxonomy'  => 'food',
+                            'taxonomy'  => 'cardapio_type',
                             'field'     => 'term_id',
                             'terms'     => $category->term_id)
                     ),
-                    'post_type' => 'food'
+                    'post_status' => 'publish'
                 );
-                $posts = get_posts($args);
-                if ($posts) {    
-                    $fade = '';
-                    if($count_category == 0){
-                        $fade = ' active in';
-                        $count_category = 1;
-                    }
-                    echo '<div class="tab-pane' . $fade . '" id="set-' . $category->slug . '">
-                            <div class="tabbable">
-                                <ul class="nav nav-tabs">';
+                $cardapios = new WP_Query( $card_args );
+                if ($cardapios->have_posts()) {
+                    $cardapios->the_post();
+                    $pratos = get_field('pratos');
+                    if( $pratos ) {
+                        $fade = '';
+                        if($count_category == 0){
+                            $fade = ' active in';
+                            $count_category = 1;
+                        }
+                        echo '<div class="tab-pane' . $fade . '" id="set-' . $category->slug . '">
+                                <div class="tabbable">
+                                    <ul class="nav nav-tabs">';
+                        
+                        lista_subcategorias_food($category->term_id);
                     
-                    lista_subcategorias_food($category->term_id);
-                    
-                    $subcat_args = array(
-                        'orderby'   => 'name',
-                        'order'     => 'ASC',
-                        'parent'    => $category->term_id
-                      );
-                    
-                    //Retorna array de categorias/taxonomy do tipo 'food'
-                    $subcategories = get_terms('food', $subcat_args);
-                    $count_subcategory = 0;
-                    echo '<div class="tab-content">';
-                    foreach($subcategories as $subcategory) {
-                        $args = array(
-                            'posts_per_page' => -1,
-                            'tax_query'  => array(
-                                array(
-                                    'taxonomy'  => 'food',
-                                    'field'     => 'term_id',
-                                    'terms'     => $subcategory->term_id)
-                            ),
-                            'post_type' => 'food'
-                        );
-                        $posts = get_posts($args);
-                        if ($posts) {
-                            $fade = '';
-                            if($count_subcategory == 0) {
-                                $fade = ' active in';
-                                $count_subcategory = 1;
-                            }
-                            echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
-                            foreach($posts as $post) {
-                                if($category->name == 'À La Carte') {
-                                     echo '<p class="dish-name">' . the_title('','',false) . '</p>
-                                            <p>' . strip_tags($post->post_content) . '</p>';
-                                } else {
-                                    verificaCardapio($category, $post->ID);
+                        $subcat_args = array(
+                            'orderby'   => 'name',
+                            'order'     => 'ASC'
+                          );
+                        
+                        //Retorna array de categorias/taxonomy do tipo 'food'
+                        $subcategories = get_terms('food', $subcat_args);
+                        $count_subcategory = 0;
+                        echo '<div class="tab-content">';
+                        foreach($subcategories as $subcategory) {
+                            $args = array(
+                                'posts_per_page' => -1,
+                                'tax_query'  => array(
+                                    array(
+                                        'taxonomy'  => 'food',
+                                        'field'     => 'term_id',
+                                        'terms'     => $subcategory->term_id)
+                                ),
+                                'post_type' => 'food'
+                            );
+                            $posts = get_posts($args);
+                            if ($posts) {
+                                $fade = '';
+                                if($count_subcategory == 0) {
+                                    $fade = ' active in';
+                                    $count_subcategory = 1;
                                 }
-                                
+                                echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
+                                foreach($posts as $post) {
+                                        verificaCardapio($category, $post->ID);
+                                }
+                                    
                             } //Post
                             echo '</div>';
                         }
                     } //subcategoria
-                    echo '</div>';
-                }
-                echo '</div>
-                </div>';
+                echo '</div>';
+            }
+        echo '</div>
+            </div>';
       } // foreach $categories
 ?>
 
