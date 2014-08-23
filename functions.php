@@ -189,7 +189,7 @@
 		endwhile; endif;
 	}
 
-    //Lista Categorias customizadas da taxonomy food
+//Lista Categorias customizadas da taxonomy food
     //Utilizada pela page-food.php
 	function lista_categorias_food() {
         $cat_args = array(
@@ -197,43 +197,30 @@
             'order'     => 'ASC',   
             'parent'    => 0        //Não possui categoria pai.
           );
-        $categories = get_terms('food', $cat_args);
+        $categories = get_terms('cardapio', $cat_args);
         $count_category = 0;
         foreach($categories as $category) {
             $args = array(
+                    'post_type' => 'cardapio',
                     'tax_query'  => array(
                         array(
-                            'taxonomy'  => 'food',
+                            'taxonomy'  => 'cardapio_type',
                             'field'     => 'term_id',
                             'terms'     => $category->term_id)
                     ),
-                    'post_type' => 'food'
+                    'post_status' => 'publish'
                 );
-            $posts = get_posts($args);
-            if ($posts) {        
-                $class = '';
-                if($count_category == 0) {
-                    $class = ' class="active"';
-                    echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
-                    $count_category = 1;
-                } else {
-                    $card_args = array(
-                        'post_type' => 'cardapio',
-                        'tax_query'  => array(
-                                        array(
-                                            'taxonomy'  => 'cardapio_type',
-                                            'field'     => 'slug',
-                                            'terms'     => $category->slug)
-                                    ),
-                        'post_status' => 'publish');
-                    $cardapios = new WP_Query( $card_args );
-                    if ($cardapios->have_posts()) {
-                        $cardapios->the_post();
-                        $pratos = get_field('pratos');
-                        if( $pratos ) {
-                            echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
-                        }
+            $cardapios = new WP_Query( $card_args );
+            if ($cardapios->have_posts()) {
+                $cardapios->the_post();
+                $pratos = get_field('pratos');
+                if( $pratos ) {
+                    $class = '';
+                    if($count_category == 0) {
+                        $class = ' class="active"';
+                        $count_category = 1;
                     }
+                    echo '<li' . $class . '><a href="#set-'. $category->slug .'">' . $category->name . '</a></li>';
                 }
             }
         }
