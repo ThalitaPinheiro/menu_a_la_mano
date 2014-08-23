@@ -189,7 +189,7 @@
 		endwhile; endif;
 	}
 
-//Lista Categorias customizadas da taxonomy food
+    //Lista Categorias customizadas da taxonomy food
     //Utilizada pela page-food.php
 	function lista_categorias_food() {
         $cat_args = array(
@@ -231,8 +231,7 @@
 	function lista_subcategorias_food($parent_id) {               
         $subcat_args = array(
             'orderby'   => 'name',
-            'order'     => 'ASC',
-            'parent'    => $parent_id   
+            'order'     => 'ASC'
         );
         //Retorna array de categorias/taxonomy do tipo 'food'
         $subcategories = get_terms('food', $subcat_args);
@@ -300,8 +299,10 @@
                 $cardapios->the_post();
                 $pratos = get_field('pratos');
                 if( $pratos ):
-                    $valor = get_field('valor');
-                    echo '<p class="dish-value">R$ ' . $valor . '</p>';
+                    if(get_field('valor')) {
+                        $valor = number_format(get_field('valor'),2,",",".");
+                        echo '<p class="dish-value">R$ ' . $valor . '</p>';
+                    }
                     $pratos_id = array();
                     foreach( $pratos as $p ):
                         array_push($pratos_id, $p->ID);
