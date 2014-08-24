@@ -194,10 +194,9 @@
 	function lista_categorias_food() {
         $cat_args = array(
             'orderby'   => 'name',  
-            'order'     => 'ASC',   
-            'parent'    => 0        //Não possui categoria pai.
-          );
-        $categories = get_terms('cardapio', $cat_args);
+            'order'     => 'ASC'
+        );
+        $categories = get_terms('cardapio_type', $cat_args);
         $count_category = 0;
         foreach($categories as $category) {
             $args = array(
@@ -210,7 +209,7 @@
                     ),
                     'post_status' => 'publish'
                 );
-            $cardapios = new WP_Query( $card_args );
+            $cardapios = new WP_Query( $args );
             if ($cardapios->have_posts()) {
                 $cardapios->the_post();
                 $pratos = get_field('pratos');
@@ -243,7 +242,7 @@
         foreach($subcategories as $subcategory) {
             $args = array(
                 'post__in' => $pratos,  
-                'tax_query'  => array(
+                'tax_query' => array(
                     array(
                         'taxonomy'  => 'food',
                         'field'     => 'term_id',
@@ -341,7 +340,6 @@
             }
         }
     }
-
 
 	// Função de Cadastro no banco
 	function create($tabela, array $datas){

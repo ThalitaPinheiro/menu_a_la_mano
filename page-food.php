@@ -28,11 +28,11 @@
               );
             
             //Retorna array de categorias/taxonomy do tipo 'food'
-            $categories = get_terms('cardapio', $cat_args);
+            $categories = get_terms('cardapio_type', $cat_args);
             $count_category = 0;
             foreach($categories as $category) {
                 $args = array(
-                    'post_type' => 'food',
+                    'post_type' => 'cardapio',
                     'tax_query'  => array(
                         array(
                             'taxonomy'  => 'cardapio_type',
@@ -41,13 +41,13 @@
                     ),
                     'post_status' => 'publish'
                 );
-                $cardapios = new WP_Query( $card_args );
+                $cardapios = new WP_Query( $args );
                 if ($cardapios->have_posts()) {
                     $cardapios->the_post();
                     $pratos = get_field('pratos');
                     if( $pratos ) {
                         $fade = '';
-                        if($count_category == 0){
+                        if($count_category == 0) {
                             $fade = ' active in';
                             $count_category = 1;
                         }
@@ -60,7 +60,7 @@
                         $subcat_args = array(
                             'orderby'   => 'name',
                             'order'     => 'ASC'
-                          );
+                        );
                         
                         //Retorna array de categorias/taxonomy do tipo 'food'
                         $subcategories = get_terms('food', $subcat_args);
@@ -88,12 +88,11 @@
                                 foreach($posts as $post) {
                                         verificaCardapio($category, $post->ID);
                                 }
-                                    
+                                echo '</div>';                                    
                             } //Post
-                            echo '</div>';
-                        }
                     } //subcategoria
                 echo '</div>';
+                }
             }
         echo '</div>
             </div>';
