@@ -47,7 +47,7 @@
                     $pratos = get_field('pratos');
                     if( $pratos ) {
                         $fade = '';
-                        if($count_category == 0) {
+                        if($count_category == 0){
                             $fade = ' active in';
                             $count_category = 1;
                         }
@@ -55,15 +55,8 @@
                                 <div class="tabbable">
                                     <ul class="nav nav-tabs">';
                         
-                        lista_subcategorias_food($category->term_id);
+                        $subcategories = lista_subcategorias_food($category->term_id);
                     
-                        $subcat_args = array(
-                            'orderby'   => 'name',
-                            'order'     => 'ASC'
-                        );
-                        
-                        //Retorna array de categorias/taxonomy do tipo 'food'
-                        $subcategories = get_terms('food', $subcat_args);
                         $count_subcategory = 0;
                         echo '<div class="tab-content">';
                         foreach($subcategories as $subcategory) {
@@ -86,13 +79,13 @@
                                 }
                                 echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
                                 foreach($posts as $post) {
-                                        verificaCardapio($category, $post->ID);
+                                    verificaCardapio($category, $post->ID);
                                 }
                                 echo '</div>';                                    
                             } //Post
+                        }
                     } //subcategoria
                 echo '</div>';
-                }
             }
         echo '</div>
             </div>';

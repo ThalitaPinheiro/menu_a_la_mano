@@ -237,6 +237,7 @@
         $count_subcat = 0;
         $subcategoria = '';
         $pratos = retornaPratos($parent_id);
+        $cat_prato = array();
         if(!$pratos)
             $pratos = '';
         foreach($subcategories as $subcategory) {
@@ -276,9 +277,12 @@
                 }
                 
                 echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategoria . '</a></li>';
+                array_push($cat_prato, $subcategory);
             }
         }
         echo '</ul>';
+        return $cat_prato;
+
     }
 
     //Retorna array com os pratos da categoria
