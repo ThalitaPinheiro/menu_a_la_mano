@@ -51,14 +51,18 @@
                             $fade = ' active in';
                             $count_category = 1;
                         }
-                        echo '<div class="tab-pane' . $fade . '" id="set-' . $category->slug . '">
-                                <div class="tabbable">
-                                    <ul class="nav nav-tabs">';
                         
-                        $subcategories = lista_subcategorias_food($category->term_id);
-                    
+                        ?>
+                            <div class="tab-pane <?php echo $fade ?> " id="set-<?php echo $category->slug ?>">
+                                <div class="tabbable">
+                                    <ul class="nav nav-tabs">
+                        <?php
+                            $subcategories = lista_subcategorias_food($category);
+                        ?>
+                                        </ul>
+                                    <div class="tab-content">
+                        <?php
                         $count_subcategory = 0;
-                        echo '<div class="tab-content">';
                         foreach($subcategories as $subcategory) {
                             $args = array(
                                 'posts_per_page' => -1,
@@ -77,18 +81,24 @@
                                     $fade = ' active in';
                                     $count_subcategory = 1;
                                 }
-                                echo '<div class="tab-pane fade' . $fade . '" id="set-' . $subcategory->slug . '">';
+                                ?>
+                                        <div class="tab-pane fade <?php echo $fade ?> " id="set-<?php echo $subcategory->slug . '-' . $category->slug ?>">
+                                <?php
                                 foreach($posts as $post) {
                                     verificaCardapio($category, $post->ID);
                                 }
-                                echo '</div>';                                    
+                                ?>
+                                        </div>
+                                <?php
                             } //Post
-                        }
-                    } //subcategoria
-                echo '</div>';
-            }
-        echo '</div>
-            </div>';
+                        } //subcategoria
+                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
+                    } // if pratos 
+            } // if cardapio
       } // foreach $categories
 ?>
 

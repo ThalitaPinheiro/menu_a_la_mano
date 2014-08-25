@@ -71,10 +71,10 @@
 	//Definições de envio de E-mail
 	global $sa_options;
 	$sa_settings = get_option('sa_options', $sa_options);
-//	define(host,$sa_settings['host']);
-//	define(emailautenticacao,$sa_settings['emailautenticacao']);
-//	define(emailautenticacaosenha,$sa_settings['emailautenticacaosenha']);
-//	define(emailsend,$sa_settings['emailsend']);
+	define(host,$sa_settings['host']);
+	define(emailautenticacao,$sa_settings['emailautenticacao']);
+	define(emailautenticacaosenha,$sa_settings['emailautenticacaosenha']);
+	define(emailsend,$sa_settings['emailsend']);
 
 	//Removendo informações da pg inicial do admin
 	function DelSecoesPainel(){
@@ -227,7 +227,7 @@
 
     //Lista SubCategorias customizadas da taxonomy food
     //Utilizada pela page-food.php
-	function lista_subcategorias_food($parent_id) {               
+	function lista_subcategorias_food($category) {               
         $subcat_args = array(
             'orderby'   => 'name',
             'order'     => 'ASC'
@@ -236,7 +236,7 @@
         $subcategories = get_terms('food', $subcat_args);
         $count_subcat = 0;
         $subcategoria = '';
-        $pratos = retornaPratos($parent_id);
+        $pratos = retornaPratos($category->term_id);
         $cat_prato = array();
         if(!$pratos)
             $pratos = '';
@@ -276,13 +276,11 @@
                         $subcategoria = $subcategory->name;
                 }
                 
-                echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'">' . $subcategoria . '</a></li>';
+                echo '<li class="' . $class . '"><a href="#set-'. $subcategory->slug .'-' . $category->slug . '">' . $subcategoria . '</a></li>';
                 array_push($cat_prato, $subcategory);
             }
         }
-        echo '</ul>';
         return $cat_prato;
-
     }
 
     //Retorna array com os pratos da categoria
@@ -344,6 +342,7 @@
             }
         }
     }
+
 
 	// Função de Cadastro no banco
 	function create($tabela, array $datas){
